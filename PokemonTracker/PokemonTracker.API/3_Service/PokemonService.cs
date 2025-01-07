@@ -64,8 +64,6 @@ public class PokemonService : IPokemonService
     {
         var pkmnList = _pokemonRepository.GetAllPkmn();
         return _mapper.Map<List<PkmnOutDTO>>(pkmnList);
-
-        
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species)     // ✅
@@ -81,7 +79,7 @@ public class PokemonService : IPokemonService
         return _mapper.Map<List<PkmnOutDTO>>(typeList);
     }
 
-    public PkmnOutDTO GetPkmnByName(string name)        // ✅ (also does this need a ?)
+    public PkmnOutDTO GetPkmnByName(string name)        // ✅ (also needs a ?, plus for iservice)
     {
         var pkmn = _pokemonRepository.GetPkmnByName(name);
         return _mapper.Map<PkmnOutDTO>(pkmn);

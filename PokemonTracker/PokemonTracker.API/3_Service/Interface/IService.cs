@@ -15,7 +15,7 @@ public interface IPokemonService
 
 public interface ITrainerService
 {
-    Trainer? CreateNewTrainer(Trainer trainer);
+    TrainerInDTO CreateNewTrainer(Trainer trainer);
     IEnumerable<TrainerOutDTO> GetAllTrainers();
     TrainerOutDTO? GetTrainerByName(string name);
     IEnumerable<Trainer> GetTeam(string name);

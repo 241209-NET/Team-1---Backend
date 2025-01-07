@@ -17,9 +17,10 @@ public class TrainerService : ITrainerService
     }
 
 
-    public Trainer? CreateNewTrainer(Trainer trainer)
+    public TrainerInDTO CreateNewTrainer(Trainer trainer)           // ✅ (took out the ?, for iservice as well)  
     {
-        return _trainerRepository.CreateNewTrainer(trainer);
+        var newTrainer = _trainerRepository.CreateNewTrainer(trainer);
+        return _mapper.Map<TrainerInDTO>(newTrainer);
     }
 
     public TrainerOutDTO? DeleteTrainerByName(string name)          // ✅
