@@ -62,15 +62,17 @@ public class PokemonService : IPokemonService
     public IEnumerable<PkmnOutDTO> GetAllPkmn()
     {
         var pkmnList = _pokemonRepository.GetAllPkmn();
-        List<PkmnOutDTO> pkmnDTOList = new List<PkmnOutDTO>();
-        pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(pkmnList);
+        List<PkmnOutDTO> pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(pkmnList);
 
         return pkmnDTOList; 
     }
 
-    public IEnumerable<Pkmn> GetAllPkmnBySpecies(string species)
+    public IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species)
     {
-        return _pokemonRepository.GetAllPkmnBySpecies(species);
+        var speciesList = _pokemonRepository.GetAllPkmnBySpecies(species);
+        List<PkmnOutDTO> pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(speciesList);
+
+        return pkmnDTOList;
     }
 
     public IEnumerable<Pkmn> GetAllPkmnByType(string type)
