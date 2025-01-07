@@ -10,6 +10,7 @@ namespace PokemonTracker.API.Service;
 public class PokemonService : IPokemonService
 {
     private readonly IPokemonRepository _pokemonRepository;
+    private readonly ITrainerService _trainerService;
     private readonly IMapper _mapper;
 
     private static readonly HttpClient pokeApi = new()
@@ -18,9 +19,10 @@ public class PokemonService : IPokemonService
     };
 
 
-    public PokemonService(IPokemonRepository pokemonRepository, IMapper mapper) 
+    public PokemonService(IPokemonRepository pokemonRepository, IMapper mapper, ITrainerService trainerService) 
     {
         _pokemonRepository = pokemonRepository;
+        _trainerService = trainerService;
         _mapper = mapper;
     } 
 
@@ -28,12 +30,13 @@ public class PokemonService : IPokemonService
     {
         int trainerID = newPkmn.TrainerID;
 
-        //var trainer = GetTrainerById(trainerID);
+        var trainer = _trainerService.GetTrainerById(trainerID);
+        Console.WriteLine("TEAM SIZE" + trainer.Team.Count);
 
         var actualPkmn = pokeApi.GetAsync($"pokemon/{newPkmn.Species.ToLower()}").Result;
         Pokemon pokemonJSON = JsonConvert.DeserializeObject<Pokemon>(actualPkmn.Content.ReadAsStringAsync().Result)!;
 
-        if (actualPkmn is null || GetPkmnByName(newPkmn.Name) is not null)
+        if (actualPkmn is null || GetPkmnByName(newPkmn.Name) is not null || trainer.Team.Count >= 6)
         {
             return null;
         }
