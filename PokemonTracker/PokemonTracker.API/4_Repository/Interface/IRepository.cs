@@ -9,7 +9,7 @@ public interface IPokemonRepository
     IEnumerable<Pkmn> GetAllPkmnByType(string type);
     IEnumerable<Pkmn> GetAllPkmnBySpecies(string species);
     Pkmn GetPkmnByName(string name);
-    Pkmn? DeletePkmnByName(Pkmn delete);
+    Pkmn? DeletePkmnByName(Pkmn pkmn);
 }
 
 public interface ITrainerRepository

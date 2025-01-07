@@ -19,12 +19,12 @@ public class PokemonRepository : IPokemonRepository
         return newPkmn;
     }
 
-    public Pkmn? DeletePkmnByName(Pkmn delete)
+    public Pkmn? DeletePkmnByName(Pkmn pkmn)
     {
-        _pokemonContext.Pkmns.Remove(delete);
+        _pokemonContext.Pkmns.Remove(pkmn);
         _pokemonContext.SaveChanges();
         
-        return delete;
+        return pkmn;
     }
 
     public IEnumerable<Pkmn> GetAllPkmn()

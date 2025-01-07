@@ -47,16 +47,19 @@ public class PokemonService : IPokemonService
         return _pokemonRepository.CreateNewPkmn(newPkmn);
     }
 
-    public Pkmn? DeletePkmnByName(string name)
+    public PkmnOutDTO? DeletePkmnByName(string name)        // ✅
     {
-        var pkmn = GetPkmnByName(name);
+        var pkmn = _pokemonRepository.GetPkmnByName(name);
 
         if (pkmn is null)
         {
             return null;
         }
-        
-        return _pokemonRepository.DeletePkmnByName(pkmn);;
+
+        var deletedPkmn = _pokemonRepository.DeletePkmnByName(pkmn);
+        PkmnOutDTO pkmnDTO = _mapper.Map<PkmnOutDTO>(deletedPkmn);
+
+        return pkmnDTO;
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmn()         // ✅
