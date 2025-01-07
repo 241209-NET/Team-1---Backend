@@ -84,8 +84,11 @@ public class PokemonService : IPokemonService
         return pkmnDTOList;
     }
 
-    public Pkmn GetPkmnByName(string name)
+    public PkmnOutDTO GetPkmnByName(string name)        // ✅
     {
-        return _pokemonRepository.GetPkmnByName(name);
+        var pkmn = _pokemonRepository.GetPkmnByName(name);
+        PkmnOutDTO pkmnDTO = _mapper.Map<PkmnOutDTO>(pkmn);
+
+        return pkmnDTO;
     }
 }

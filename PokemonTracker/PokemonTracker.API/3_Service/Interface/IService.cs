@@ -9,7 +9,7 @@ public interface IPokemonService
     IEnumerable<PkmnOutDTO> GetAllPkmn();
     IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type);
     IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species);
-    Pkmn GetPkmnByName(string name);
+    PkmnOutDTO GetPkmnByName(string name);
     Pkmn? DeletePkmnByName(string name);
 }
 
