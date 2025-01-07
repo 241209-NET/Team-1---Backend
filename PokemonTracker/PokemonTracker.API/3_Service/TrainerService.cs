@@ -1,13 +1,20 @@
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
+using PokemonTracker.API.DTO;
+using AutoMapper;
 
 namespace PokemonTracker.API.Service;
 
 public class TrainerService : ITrainerService
 {
     private readonly ITrainerRepository _trainerRepository;
+    private readonly IMapper _mapper;
 
-    public TrainerService(ITrainerRepository trainerRepository) => _trainerRepository = trainerRepository;
+    public TrainerService(ITrainerRepository trainerRepository, IMapper mapper) 
+    {
+        _trainerRepository = trainerRepository;
+        _mapper = mapper;
+    }
 
 
     public Trainer? CreateNewTrainer(Trainer trainer)
