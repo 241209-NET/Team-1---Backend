@@ -31,7 +31,6 @@ public class PokemonService : IPokemonService
         int trainerID = newPkmn.TrainerID;
 
         var trainer = _trainerService.GetTrainerById(trainerID);
-        Console.WriteLine("TEAM SIZE" + trainer.Team.Count);
 
         var actualPkmn = pokeApi.GetAsync($"pokemon/{newPkmn.Species.ToLower()}").Result;
         Pokemon pokemonJSON = JsonConvert.DeserializeObject<Pokemon>(actualPkmn.Content.ReadAsStringAsync().Result)!;
@@ -53,6 +52,11 @@ public class PokemonService : IPokemonService
         }
 
         pkmn.Type = pkmn.Type.Trim().Replace(" ", "/");
+
+        //trainer.Team.Add(pkmn);
+        
+        Console.WriteLine("TEAM SIZE" + trainer.Team.Count);
+        Console.WriteLine("TRAINER" + trainer.Name);
         
         return _mapper.Map<PkmnOutDTO>(_pokemonRepository.CreateNewPkmn(pkmn));
     }

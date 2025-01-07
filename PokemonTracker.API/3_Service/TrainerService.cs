@@ -59,6 +59,13 @@ public class TrainerService : ITrainerService
     public Trainer? GetTrainerById(int id)
     {
         var trainer = _trainerRepository.GetTrainerById(id);
+
+        var team = GetTeam(trainer.Name);
+
+        trainer.Team = _mapper.Map<List<Pkmn>>(team.ElementAt(0).Team);
+    
         return trainer;
     }
+
+
 }
