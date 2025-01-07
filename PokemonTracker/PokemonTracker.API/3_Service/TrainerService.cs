@@ -39,7 +39,7 @@ public class TrainerService : ITrainerService
         var trainerList = _trainerRepository.GetAllTrainers();
         return _mapper.Map<List<TrainerOutDTO>>(trainerList);       
     }
-
+ 
     public IEnumerable<Trainer> GetTeam(string name)
     {
         return _trainerRepository.GetTeam(name);
