@@ -52,4 +52,12 @@ public class PokemonRepository : IPokemonRepository
 
         return pkmn;
     }
+
+   /*  public Trainer GetTrainerById(int id)
+    {
+         var trainer = _pokemonContext.Pkmns.FirstOrDefault(p => p.Id.Equals(id));
+
+         return trainer;
+    } */
+
 }

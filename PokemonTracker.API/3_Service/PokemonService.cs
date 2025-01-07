@@ -1,12 +1,11 @@
-namespace PokemonTracker.API.Service;
-
-using System.Collections.Generic;
 using AutoMapper;
 using Newtonsoft.Json;
 using PokeApiNet;
 using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
+
+namespace PokemonTracker.API.Service;
 
 public class PokemonService : IPokemonService
 {
@@ -27,6 +26,10 @@ public class PokemonService : IPokemonService
 
     public PkmnOutDTO? CreateNewPkmn(PkmnInDTO newPkmn)
     {
+        int trainerID = newPkmn.TrainerID;
+
+        //var trainer = GetTrainerById(trainerID);
+
         var actualPkmn = pokeApi.GetAsync($"pokemon/{newPkmn.Species.ToLower()}").Result;
         Pokemon pokemonJSON = JsonConvert.DeserializeObject<Pokemon>(actualPkmn.Content.ReadAsStringAsync().Result)!;
 

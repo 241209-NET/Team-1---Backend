@@ -46,4 +46,10 @@ public class TrainerRepository : ITrainerRepository
 
         return trainer;
     }
+
+    public Trainer? GetTrainerById(int id)
+    {
+        var trainer = _trainerContext.Trainers.Find(id);
+        return trainer;
+    }
 }

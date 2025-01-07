@@ -19,4 +19,5 @@ public interface ITrainerRepository
     Trainer? GetTrainerByName(string name);
     IEnumerable<Trainer> GetTeam(string name);
     Trainer? DeleteTrainerByName(Trainer trainer);
+    Trainer? GetTrainerById(int id);
 }
