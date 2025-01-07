@@ -45,11 +45,11 @@ public class TrainerService : ITrainerService
         return _trainerRepository.GetTeam(name);
     }
 
-    public Trainer? GetTrainerByName(string name)
+    public TrainerOutDTO? GetTrainerByName(string name)             // ✅
     {
         if (string.IsNullOrEmpty(name)) return null;
 
         var trainer = _trainerRepository.GetTrainerByName(name);
-        return trainer;
+        return _mapper.Map<TrainerOutDTO>(trainer);
     }
 }
