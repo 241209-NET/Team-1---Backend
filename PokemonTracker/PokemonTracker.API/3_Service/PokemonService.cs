@@ -75,7 +75,7 @@ public class PokemonService : IPokemonService
         return pkmnDTOList;
     }
 
-    public IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type)
+    public IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type)        // ✅
     {
         type = type.ToLower();
         var typeList = _pokemonRepository.GetAllPkmnByType(type);
