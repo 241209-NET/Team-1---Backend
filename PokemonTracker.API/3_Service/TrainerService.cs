@@ -16,14 +16,14 @@ public class TrainerService : ITrainerService
         _mapper = mapper;
     }
 
-
-    public TrainerInDTO CreateNewTrainer(Trainer trainer)           // ✅ (took out the ?, for iservice as well)  
+    public TrainerOutDTO? CreateNewTrainer(TrainerInDTO trainerIn)
     {
+        var trainer = _mapper.Map<Trainer>(trainerIn);
         var newTrainer = _trainerRepository.CreateNewTrainer(trainer);
-        return _mapper.Map<TrainerInDTO>(newTrainer);
+        return _mapper.Map<TrainerOutDTO>(newTrainer);
     }
 
-    public TrainerOutDTO? DeleteTrainerByName(string name)          // ✅
+    public TrainerOutDTO? DeleteTrainerByName(string name)
     {
         var trainer = _trainerRepository.GetTrainerByName(name);
 
@@ -36,18 +36,18 @@ public class TrainerService : ITrainerService
         return _mapper.Map<TrainerOutDTO>(deletedTrainer);
     }
 
-    public IEnumerable<TrainerOutDTO> GetAllTrainers()              // ✅
+    public IEnumerable<TrainerOutDTO> GetAllTrainers()
     {
         var trainerList = _trainerRepository.GetAllTrainers();
         return _mapper.Map<List<TrainerOutDTO>>(trainerList);       
     }
  
-    public IEnumerable<Trainer> GetTeam(string name)
+    public IEnumerable<TrainerOutDTO> GetTeam(string name)
     {
-        return _trainerRepository.GetTeam(name);
+        return _mapper.Map<IEnumerable<TrainerOutDTO>>(_trainerRepository.GetTeam(name));
     }
 
-    public TrainerOutDTO? GetTrainerByName(string name)             // ✅
+    public TrainerOutDTO? GetTrainerByName(string name)
     {
         if (string.IsNullOrEmpty(name)) return null;
 

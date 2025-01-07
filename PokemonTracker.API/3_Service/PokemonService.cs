@@ -25,7 +25,7 @@ public class PokemonService : IPokemonService
         _mapper = mapper;
     } 
 
-    public Pkmn? CreateNewPkmn(Pkmn newPkmn)
+    public PkmnOutDTO? CreateNewPkmn(PkmnInDTO newPkmn)
     {
         var actualPkmn = pokeApi.GetAsync($"pokemon/{newPkmn.Species.ToLower()}").Result;
         Pokemon pokemonJSON = JsonConvert.DeserializeObject<Pokemon>(actualPkmn.Content.ReadAsStringAsync().Result)!;
@@ -35,19 +35,23 @@ public class PokemonService : IPokemonService
             return null;
         }
 
-        newPkmn.Species = pokemonJSON!.Species.Name;
+        Pkmn pkmn = _mapper.Map<Pkmn>(newPkmn);
 
-        newPkmn.Type = "";
+        pkmn.Species = pokemonJSON!.Species.Name;
+
+        pkmn.Type = "";
 
         foreach (PokemonType t in pokemonJSON.Types)
         {
-            newPkmn.Type += t.Type.Name + "/";
+            pkmn.Type += t.Type.Name + " ";
         }
+
+        pkmn.Type = pkmn.Type.Trim().Replace(" ", "/");
         
-        return _pokemonRepository.CreateNewPkmn(newPkmn);
+        return _mapper.Map<PkmnOutDTO>(_pokemonRepository.CreateNewPkmn(pkmn));
     }
 
-    public PkmnOutDTO? DeletePkmnByName(string name)        // ✅
+    public PkmnOutDTO? DeletePkmnByName(string name)
     {
         var pkmn = _pokemonRepository.GetPkmnByName(name);
 
@@ -60,26 +64,26 @@ public class PokemonService : IPokemonService
         return _mapper.Map<PkmnOutDTO>(deletedPkmn);
     }
 
-    public IEnumerable<PkmnOutDTO> GetAllPkmn()         // ✅
+    public IEnumerable<PkmnOutDTO> GetAllPkmn()
     {
         var pkmnList = _pokemonRepository.GetAllPkmn();
         return _mapper.Map<List<PkmnOutDTO>>(pkmnList);
     }
 
-    public IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species)     // ✅
+    public IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species)
     {
         var speciesList = _pokemonRepository.GetAllPkmnBySpecies(species);
         return _mapper.Map<List<PkmnOutDTO>>(speciesList);
     }
 
-    public IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type)        // ✅
+    public IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type)
     {
         type = type.ToLower();
         var typeList = _pokemonRepository.GetAllPkmnByType(type);
         return _mapper.Map<List<PkmnOutDTO>>(typeList);
     }
 
-    public PkmnOutDTO GetPkmnByName(string name)        // ✅ (also needs a ?, plus for iservice)
+    public PkmnOutDTO? GetPkmnByName(string name)
     {
         var pkmn = _pokemonRepository.GetPkmnByName(name);
         return _mapper.Map<PkmnOutDTO>(pkmn);

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Service;
 
@@ -13,7 +14,7 @@ public class TrainerController : ControllerBase
     public TrainerController(ITrainerService trainerService) => _trainerService = trainerService;
 
     [HttpPost]
-    public IActionResult CreateNewTrainer(Trainer newTrainer)
+    public IActionResult CreateNewTrainer(TrainerInDTO newTrainer)
     {
         var trainer = _trainerService.CreateNewTrainer(newTrainer);
 
@@ -21,6 +22,9 @@ public class TrainerController : ControllerBase
         {
             return NotFound();
         }
+
+        // Pass in trainerInDTO
+        // return trainerOutDTO
 
         return Ok(trainer);
     }

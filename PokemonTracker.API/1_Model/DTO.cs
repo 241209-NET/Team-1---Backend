@@ -25,6 +25,7 @@ public class TrainerInDTO
 
 public class TrainerOutDTO
 {
+    public int Id { get; set;}
     public string Name { get; set;} = "";
     public List<PkmnOutDTO> Team { get; set; } = [];
 }

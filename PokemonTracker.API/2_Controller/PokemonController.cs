@@ -1,6 +1,7 @@
 namespace PokemonTracker.API.Controller;
 
 using Microsoft.AspNetCore.Mvc;
+using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Service;
 
@@ -16,7 +17,7 @@ public class PokemonController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateNewPkmn(Pkmn newPkmn)
+    public IActionResult CreateNewPkmn(PkmnInDTO newPkmn)
     {
         var pkmn = _pokemonService.CreateNewPkmn(newPkmn);
 
