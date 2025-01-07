@@ -41,7 +41,7 @@ public class PokemonRepository : IPokemonRepository
 
     public IEnumerable<Pkmn> GetAllPkmnByType(string type)
     {
-        var pkmn = _pokemonContext.Pkmns.Where(p => p.Type.Contains(type)).ToList();
+        var pkmn = _pokemonContext.Pkmns.Where(p => p.Type.ToLower().Contains(type)).ToList();
 
         return pkmn;
     }
