@@ -57,41 +57,33 @@ public class PokemonService : IPokemonService
         }
 
         var deletedPkmn = _pokemonRepository.DeletePkmnByName(pkmn);
-        PkmnOutDTO pkmnDTO = _mapper.Map<PkmnOutDTO>(deletedPkmn);
-
-        return pkmnDTO;
+        return _mapper.Map<PkmnOutDTO>(deletedPkmn);
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmn()         // ✅
     {
         var pkmnList = _pokemonRepository.GetAllPkmn();
-        List<PkmnOutDTO> pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(pkmnList);
+        return _mapper.Map<List<PkmnOutDTO>>(pkmnList);
 
-        return pkmnDTOList; 
+        
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species)     // ✅
     {
         var speciesList = _pokemonRepository.GetAllPkmnBySpecies(species);
-        List<PkmnOutDTO> pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(speciesList);
-
-        return pkmnDTOList;
+        return _mapper.Map<List<PkmnOutDTO>>(speciesList);
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type)        // ✅
     {
         type = type.ToLower();
         var typeList = _pokemonRepository.GetAllPkmnByType(type);
-        List<PkmnOutDTO> pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(typeList);
-
-        return pkmnDTOList;
+        return _mapper.Map<List<PkmnOutDTO>>(typeList);
     }
 
     public PkmnOutDTO GetPkmnByName(string name)        // ✅
     {
         var pkmn = _pokemonRepository.GetPkmnByName(name);
-        PkmnOutDTO pkmnDTO = _mapper.Map<PkmnOutDTO>(pkmn);
-
-        return pkmnDTO;
+        return _mapper.Map<PkmnOutDTO>(pkmn);
     }
 }
