@@ -34,7 +34,7 @@ public class TrainerService : ITrainerService
         return _trainerRepository.DeleteTrainerByName(trainer);
     }
 
-    public IEnumerable<TrainerOutDTO> GetAllTrainers()
+    public IEnumerable<TrainerOutDTO> GetAllTrainers()              // ✅
     {
         var trainerList = _trainerRepository.GetAllTrainers();
         return _mapper.Map<List<TrainerOutDTO>>(trainerList);       
