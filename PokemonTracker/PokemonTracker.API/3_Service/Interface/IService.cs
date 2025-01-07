@@ -19,5 +19,5 @@ public interface ITrainerService
     IEnumerable<TrainerOutDTO> GetAllTrainers();
     TrainerOutDTO? GetTrainerByName(string name);
     IEnumerable<Trainer> GetTeam(string name);
-    Trainer? DeleteTrainerByName(string name);
+    TrainerOutDTO? DeleteTrainerByName(string name);
 }
