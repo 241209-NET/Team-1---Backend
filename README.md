@@ -1,5 +1,5 @@
-## Team 1
-A web app to query for different pokemon and for trainers to add pokemon to their teams.
+## PokéManager
+A web app hosted on Azure where trainers can sign up, look through the different pokemon they want and make teams of them. Trainers can also search for other trainers, trainers' teams, and for pokemon details.
 
 ## Requirements
 - Application Must build and run
@@ -44,7 +44,8 @@ A web app to query for different pokemon and for trainers to add pokemon to thei
 ## External API: 
 - PokeAPI
 
-## Project Management System: Trello
+## Project Management System:
+- Trello
 
 ## How the project board is managed: 
 - By: John Adams, Ludia Park
