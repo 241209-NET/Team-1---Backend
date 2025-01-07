@@ -1,14 +1,17 @@
 namespace PokemonTracker.API.Service;
 
 using System.Collections.Generic;
+using AutoMapper;
 using Newtonsoft.Json;
 using PokeApiNet;
+using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
 
 public class PokemonService : IPokemonService
 {
     private readonly IPokemonRepository _pokemonRepository;
+    private readonly IMapper _mapper;
 
     private static readonly HttpClient pokeApi = new()
     {
@@ -16,7 +19,11 @@ public class PokemonService : IPokemonService
     };
 
 
-    public PokemonService(IPokemonRepository pokemonRepository) => _pokemonRepository = pokemonRepository;
+    public PokemonService(IPokemonRepository pokemonRepository, IMapper mapper) 
+    {
+        _pokemonRepository = pokemonRepository;
+        _mapper = mapper;
+    } 
 
     public Pkmn? CreateNewPkmn(Pkmn newPkmn)
     {
@@ -52,9 +59,13 @@ public class PokemonService : IPokemonService
         return _pokemonRepository.DeletePkmnByName(pkmn);;
     }
 
-    public IEnumerable<Pkmn> GetAllPkmn()
+    public IEnumerable<PkmnOutDTO> GetAllPkmn()
     {
-        return _pokemonRepository.GetAllPkmn();
+        var pkmnList = _pokemonRepository.GetAllPkmn();
+        List<PkmnOutDTO> pkmnDTOList = new List<PkmnOutDTO>();
+        pkmnDTOList = _mapper.Map<List<PkmnOutDTO>>(pkmnList);
+
+        return pkmnDTOList; 
     }
 
     public IEnumerable<Pkmn> GetAllPkmnBySpecies(string species)

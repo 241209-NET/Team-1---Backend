@@ -1,3 +1,4 @@
+using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 
 namespace PokemonTracker.API.Service;
@@ -5,7 +6,7 @@ namespace PokemonTracker.API.Service;
 public interface IPokemonService
 {
     Pkmn? CreateNewPkmn(Pkmn pkmn);
-    IEnumerable<Pkmn> GetAllPkmn();
+    IEnumerable<PkmnOutDTO> GetAllPkmn();
     IEnumerable<Pkmn> GetAllPkmnByType(string type);
     IEnumerable<Pkmn> GetAllPkmnBySpecies(string species);
     Pkmn GetPkmnByName(string name);
