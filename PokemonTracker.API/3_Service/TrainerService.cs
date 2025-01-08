@@ -16,9 +16,10 @@ public class TrainerService : ITrainerService
         _mapper = mapper;
     }
 
-    public TrainerOutDTO? CreateNewTrainer(TrainerInDTO trainerIn)
+    public TrainerOutDTO CreateNewTrainer(TrainerInDTO trainerIn)
     {
         var trainer = _mapper.Map<Trainer>(trainerIn);
+        
         var newTrainer = _trainerRepository.CreateNewTrainer(trainer);
 
         return _mapper.Map<TrainerOutDTO>(newTrainer);
@@ -56,7 +57,7 @@ public class TrainerService : ITrainerService
         return _mapper.Map<TrainerOutDTO>(trainer);
     }
 
-    public Trainer? GetTrainerById(int id)
+    public Trainer GetTrainerById(int id)
     {
         var trainer = _trainerRepository.GetTrainerById(id);
 

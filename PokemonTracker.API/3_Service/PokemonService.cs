@@ -27,9 +27,14 @@ public class PokemonService : IPokemonService
         var trainer = _trainerService.GetTrainerById(trainerID);
 
 
-        if (GetPkmnByName(newPkmn.Name) is not null || trainer.Team.Count >= 6)
+        if (GetPkmnByName(newPkmn.Name) is not null)
         {
-            return null;
+            throw new Exception("This Pokemon already exists!");
+        }
+        if (trainer.Team.Count >= 6)
+        {
+            Console.WriteLine("TRAINER" + trainer.Team.Count);
+            throw new Exception("This trainer's team is already full! Please remove a pokemon first.");
         }
 
         Pkmn pkmn = _mapper.Map<Pkmn>(newPkmn);
