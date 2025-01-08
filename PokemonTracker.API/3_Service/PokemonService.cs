@@ -55,7 +55,7 @@ public class PokemonService : IPokemonService
         }
 
         var deletedPkmn = _pokemonRepository.DeletePkmnByName(pkmn);
-        return _mapper.Map<PkmnOutDTO>(deletedPkmn);
+        return _mapper.Map<PkmnOutDTO>(pkmn);
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmn()
