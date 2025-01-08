@@ -7,6 +7,7 @@ public class PkmnInDTO
 {
     public string Species { get; set; } = "";
     public string Name { get; set; } = "";
+    public string PokedexDesc { get; set; } = "";
     public int TrainerID { get; set; }
 }
 
@@ -15,6 +16,7 @@ public class PkmnOutDTO
     public string Species { get; set; } = "";
     public string Name { get; set; } = "";
     public string Type { get; set;} = "";
+    public string PokedexDesc { get; set; } = "";
 }
 
 [Index(nameof(Name), IsUnique = true)]

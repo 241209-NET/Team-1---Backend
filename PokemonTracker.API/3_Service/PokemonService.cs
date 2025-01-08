@@ -46,6 +46,8 @@ public class PokemonService : IPokemonService
 
         pkmn.Type = "";
 
+        pkmn.PokedexDesc = newPkmn.PokedexDesc;
+
         foreach (PokemonType t in pokemonJSON.Types)
         {
             pkmn.Type += t.Type.Name + " ";
