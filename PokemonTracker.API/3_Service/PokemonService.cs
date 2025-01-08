@@ -13,12 +13,6 @@ public class PokemonService : IPokemonService
     private readonly ITrainerService _trainerService;
     private readonly IMapper _mapper;
 
-    private static readonly HttpClient pokeApi = new()
-    {
-        BaseAddress = new Uri("https://pokeapi.co/api/v2/")
-    };
-
-
     public PokemonService(IPokemonRepository pokemonRepository, IMapper mapper, ITrainerService trainerService) 
     {
         _pokemonRepository = pokemonRepository;
@@ -32,33 +26,21 @@ public class PokemonService : IPokemonService
 
         var trainer = _trainerService.GetTrainerById(trainerID);
 
-        var actualPkmn = pokeApi.GetAsync($"pokemon/{newPkmn.Species.ToLower()}").Result;
-        Pokemon pokemonJSON = JsonConvert.DeserializeObject<Pokemon>(actualPkmn.Content.ReadAsStringAsync().Result)!;
 
-        if (actualPkmn is null || GetPkmnByName(newPkmn.Name) is not null || trainer.Team.Count >= 6)
+        if (GetPkmnByName(newPkmn.Name) is not null || trainer.Team.Count >= 6)
         {
             return null;
         }
 
         Pkmn pkmn = _mapper.Map<Pkmn>(newPkmn);
 
-        pkmn.Species = pokemonJSON!.Species.Name;
+        pkmn.Species = newPkmn.Species;
 
-        pkmn.Type = "";
-
-        pkmn.PokedexDesc = newPkmn.PokedexDesc;
-
-        foreach (PokemonType t in pokemonJSON.Types)
-        {
-            pkmn.Type += t.Type.Name + " ";
-        }
+        pkmn.Type = newPkmn.Type;
 
         pkmn.Type = pkmn.Type.Trim().Replace(" ", "/");
 
-        //trainer.Team.Add(pkmn);
-        
-        Console.WriteLine("TEAM SIZE" + trainer.Team.Count);
-        Console.WriteLine("TRAINER" + trainer.Name);
+        pkmn.PokedexDesc = newPkmn.PokedexDesc;
         
         return _mapper.Map<PkmnOutDTO>(_pokemonRepository.CreateNewPkmn(pkmn));
     }
