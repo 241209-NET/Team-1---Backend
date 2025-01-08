@@ -77,7 +77,7 @@ public class TrainerServiceTests
 //     }
 
     [Fact]
-    public void DeleteTrainerByNameTest()
+    public void DeleteTrainerByName_Exists_Test()
     {
         // Arrange
         Mock<ITrainerRepository> mockTrainerRepo = new();
