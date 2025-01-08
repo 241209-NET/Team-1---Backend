@@ -131,4 +131,74 @@ public class TrainerServiceTests
         Assert.Equal(deletedTrainer.Name, deletedTrainerDto.Name);  // our Misty is same as our created dto name
         Assert.DoesNotContain(deletedTrainer, trainerList);     // is actually removed
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    [Fact]
+    public void DeleteTrainerByName_DoesntExist_Test()
+    {
+        // Arrange
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        Mock<IMapper> mockMapper = new Mock<IMapper>();
+        TrainerService trainerService = new(mockTrainerRepo.Object, mockMapper.Object);
+
+        // Configure Automapper
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        IMapper mapper = config.CreateMapper();
+
+        // mock the mapper to see if mapped successfully to all fields of an OutDTO,
+        // then, wherever in this test we pass in a Trainer object, will substitute it with 
+        // a TrainerOutDTO instead.
+        mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>())).Returns((Trainer t) => new TrainerOutDTO
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Team = t.Team.Select(p => new PkmnOutDTO()).ToList()
+        });
+
+        // mock list of trainers
+        List<Trainer> trainerList = [
+            new Trainer{ Name = "Ash" },
+            new Trainer{ Name = "Brock" },
+            new Trainer{ Name = "Misty" }
+        ];
+
+        // // mock trainer to be deleted
+        // Trainer deletedTrainer = trainerList.First(t => t.Name == "Misty");
+
+        // mock get trainer by name since we use it in service for delete method.
+        mockTrainerRepo.Setup(repo => repo.GetTrainerByName(It.IsAny<string>()))
+            .Returns((string name) => trainerList.FirstOrDefault(t => t.Name == name));
+
+        // mock a non-existent trainer name
+        string ghostTrainerName = "Grunch";
+
+        // don't mock delete trainer by name for deletion since we will halt at failed get by name.
+
+        // Act
+        var deletedTrainerDto = trainerService.DeleteTrainerByName(ghostTrainerName);
+
+        // Assert
+        Assert.Null(deletedTrainerDto);
+    }
 }
