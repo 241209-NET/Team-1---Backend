@@ -1,4 +1,6 @@
+using AutoMapper;
 using Moq;
+using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
 using PokemonTracker.API.Service;
@@ -11,7 +13,16 @@ public class PkmnServiceTests
     {
         // Arrange
         Mock<IPokemonRepository> mockPkmnRepo = new();
-        PokemonService pkmnService = new(mockPkmnRepo.Object);
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        //Configure Automapper
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        IMapper mapper = config.CreateMapper();
+
+        TrainerService ts = new(mockTrainerRepo.Object, mapper);
+        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
 
         List<Pkmn> pkmnList = [
             new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
@@ -27,7 +38,7 @@ public class PkmnServiceTests
             .Returns(newPkmn);
 
         // Act
-        var myPkmn = pkmnService.CreateNewPkmn(newPkmn);
+        var myPkmn = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(newPkmn));
 
         // Assert
         Assert.Contains(newPkmn, pkmnList);
@@ -111,7 +122,16 @@ public class PkmnServiceTests
     {
         // Arrange
         Mock<IPokemonRepository> mockPkmnRepo = new();
-        PokemonService pkmnService = new(mockPkmnRepo.Object);
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        //Configure Automapper
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        IMapper mapper = config.CreateMapper();
+
+        TrainerService ts = new(mockTrainerRepo.Object, mapper);
+        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
 
         List<Pkmn> pkmnList = [
             new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
@@ -129,8 +149,8 @@ public class PkmnServiceTests
 
         // Act
         var myPkmn = pkmnService.DeletePkmnByName(newPkmn.Name);
-
+        var mappedpkmn = mapper.Map<Pkmn>(myPkmn);
         // Assert
-        Assert.DoesNotContain(myPkmn, pkmnList);
+        Assert.DoesNotContain(mappedpkmn, pkmnList);
   }
 }
