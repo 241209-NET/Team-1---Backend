@@ -56,7 +56,7 @@ public class PokemonService : IPokemonService
 
         if (pkmn is null)
         {
-            return null;
+            throw new Exception("This pokemon does not exist!");
         }
 
         var deletedPkmn = _pokemonRepository.DeletePkmnByName(pkmn);
@@ -85,6 +85,12 @@ public class PokemonService : IPokemonService
     public PkmnOutDTO? GetPkmnByName(string name)
     {
         var pkmn = _pokemonRepository.GetPkmnByName(name);
+
+        if (pkmn is null)
+        {
+            throw new Exception("This pokemon does not exist!");
+        }
+        
         return _mapper.Map<PkmnOutDTO>(pkmn);
     }
 }

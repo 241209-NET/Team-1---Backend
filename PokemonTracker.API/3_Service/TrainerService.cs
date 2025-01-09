@@ -47,7 +47,7 @@ public class TrainerService : ITrainerService
 
         if (trainer is null)
         {
-            return null;
+            throw new Exception("This trainer doesn't exist!");
         }
 
         var deletedTrainer = _trainerRepository.DeleteTrainerByName(trainer);
@@ -67,9 +67,18 @@ public class TrainerService : ITrainerService
 
     public TrainerOutDTO? GetTrainerByName(string name)
     {
-        if (string.IsNullOrEmpty(name)) return null;
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new Exception("The name is not vaild!");
+        }
 
         var trainer = _trainerRepository.GetTrainerByName(name);
+
+        if (trainer is null)
+        {
+            throw new Exception("This trainer does not exist!");
+        }
+
         return _mapper.Map<TrainerOutDTO>(trainer);
     }
 

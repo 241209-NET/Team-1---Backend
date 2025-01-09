@@ -15,14 +15,15 @@ public class TrainerController : ControllerBase
     [HttpPost]
     public IActionResult CreateNewTrainer(TrainerInDTO newTrainer)
     {
-        var trainer = _trainerService.CreateNewTrainer(newTrainer);
-
-        if (trainer is null)
+        try
         {
-            return NotFound();
+            var trainer = _trainerService.CreateNewTrainer(newTrainer);
+            return Ok(trainer);
         }
-
-        return Ok(trainer);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("login")]
@@ -59,26 +60,29 @@ public class TrainerController : ControllerBase
     [HttpGet("name/{name}")]
     public IActionResult GetTrainerByName(string name)
     {
-        var findTrainer = _trainerService.GetTrainerByName(name);
-
-        if (findTrainer is null)
+        try
         {
-            return NotFound(); 
-        }
+            var findTrainer = _trainerService.GetTrainerByName(name);
+            return Ok(findTrainer);
 
-        return Ok(findTrainer);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("delete/{name}")]
     public IActionResult DeleteTrainerByName(string name)
     {
-        var deleteTrainer = _trainerService.DeleteTrainerByName(name);
-
-        if (deleteTrainer is null)
+        try
         {
-            return NotFound();
+            var deleteTrainer = _trainerService.DeleteTrainerByName(name);
+            return Ok(deleteTrainer);
         }
-
-        return Ok(deleteTrainer);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
