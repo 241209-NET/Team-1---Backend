@@ -9,54 +9,189 @@ namespace PokemonTracker.Test;
 
 public class TrainerServiceTests
 {
-    // [Fact]
-    // public void CreateNewTrainerTest()
-    // {
-    //     // Arrange
-    //     Mock<ITrainerRepository> mockTrainerRepo = new();
-    //     TrainerService trainerService = new(mockTrainerRepo.Object);
 
-    //     List<Trainer> trainerList = [
-    //         new Trainer{Name = "Ash"},
-    //         new Trainer{Name = "Brock"},
-    //         new Trainer{Name = "Misty"}
-    //     ];
 
-    //     Trainer newTrainer = new Trainer{Name = "Tracy"};
 
-    //     mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>()))
-    //         .Callback((Trainer t) => trainerList.Add(t))
-    //         .Returns(newTrainer);
 
-    //     // Act
-    //     var myTrainer = trainerService.CreateNewTrainer(newTrainer);
 
-    //     // Assert
-    //     Assert.Contains(newTrainer, trainerList);
-    //     mockTrainerRepo.Verify(t => t.CreateNewTrainer(It.IsAny<Trainer>()), Times.Once());
-    // }
 
-//     [Fact]
-//     public void GetAllTrainersTest()
-//     {
-//         // Arrange
-//         Mock<ITrainerRepository> mockRepo = new();
-//         TrainerService trainerService = new(mockRepo.Object);
 
-//         List<Trainer> trainerList = [
-//             new Trainer{Name = "Ash"},
-//             new Trainer{Name = "Brock"},
-//             new Trainer{Name = "Misty"}
-//         ];
 
-//         mockRepo.Setup(repo => repo.GetAllTrainers()).Returns(trainerList);
 
-//         // Act
-//         var result = trainerService.GetAllTrainers().ToList();
 
-//         // Assert
-//         Assert.Equal(trainerList, result);
-//     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     [Fact]
     public void GetTrainerByName_Exists_Test()
@@ -101,6 +236,60 @@ public class TrainerServiceTests
         Assert.Equal(chosenTrainer.Id, res.Id);         
         Assert.Equal(chosenTrainer.Team.Count, res.Team.Count);
     }
+
+
+
+
+
+    [Fact]
+    public void GetTrainerByName_DoesntExist_Test()
+    {
+        // Arrange
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        Mock<IMapper> mockMapper = new Mock<IMapper>();
+        TrainerService trainerService = new(mockTrainerRepo.Object, mockMapper.Object);
+
+        // Configure Automapper
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        IMapper mapper = config.CreateMapper();
+
+        // // mock the mapper to see if mapped successfully to all fields of an OutDTO,
+        // // then, wherever in this test we pass in a Trainer object, will substitute it with 
+        // // a TrainerOutDTO instead.
+        // mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>())).Returns((Trainer t) => new TrainerOutDTO
+        // {
+        //     Id = t.Id,
+        //     Name = t.Name,
+        //     Team = t.Team.Select(p => new PkmnOutDTO()).ToList()
+        // });
+
+        // // mock trainer to be got:
+        // Trainer chosenTrainer = new Trainer { Name = "Serena" };
+
+        // // mock get trainer by name:
+        // mockTrainerRepo.Setup(repo => repo.GetTrainerByName("Serena"))
+        //     .Returns(chosenTrainer);
+
+        // // Act
+        // var res = trainerService.GetTrainerByName("Serena");
+
+        // // Assert
+        // Assert.NotNull(res);
+        // // check each field of dto to make sure success of dto mapping.
+        // // cannot do Assert.Equal(chosenTrainer, res) cuz 1 is Trainer obj and res is dto obj.
+        // Assert.Equal(chosenTrainer.Name, res.Name);
+        // Assert.Equal(chosenTrainer.Id, res.Id);
+        // Assert.Equal(chosenTrainer.Team.Count, res.Team.Count);
+    }
+
+
+
+
+
+
 
     [Fact]
     public void DeleteTrainerByName_Exists_Test()
