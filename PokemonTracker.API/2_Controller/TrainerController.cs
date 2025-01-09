@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonTracker.API.DTO;
-using PokemonTracker.API.Model;
 using PokemonTracker.API.Service;
 
 namespace PokemonTracker.API.Controller;
@@ -23,10 +22,23 @@ public class TrainerController : ControllerBase
             return NotFound();
         }
 
-        // Pass in trainerInDTO
-        // return trainerOutDTO
-
         return Ok(trainer);
+    }
+
+    [HttpGet("login")]
+    public IActionResult Login([FromBody] string username, [FromBody] string password)
+    {
+        int trainerId = -5;
+
+        try
+        {
+            trainerId = _trainerService.Login(username, password);
+            return Ok(trainerId);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]

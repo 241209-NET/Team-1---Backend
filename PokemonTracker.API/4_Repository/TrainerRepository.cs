@@ -52,4 +52,11 @@ public class TrainerRepository : ITrainerRepository
         var trainer = _trainerContext.Trainers.Find(id);
         return trainer;
     }
+
+    public Trainer GetTrainerByUsername(string username)
+    {
+        var trainer = _trainerContext.Trainers.Where(t => t.Username == username).First();
+
+        return trainer;
+    }
 }

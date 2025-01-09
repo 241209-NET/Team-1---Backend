@@ -25,6 +25,22 @@ public class TrainerService : ITrainerService
         return _mapper.Map<TrainerOutDTO>(newTrainer);
     }
 
+    public int Login(string username, string password)
+    {
+        var trainer = _trainerRepository.GetTrainerByUsername(username);
+
+        if (trainer is null)
+        {
+            throw new Exception("This trainer doesn't exist");
+        }
+        else if (trainer.Password != password)
+        {
+            throw new Exception("The password doesn't match");
+        }
+        
+        return trainer.Id;
+    }
+
     public TrainerOutDTO? DeleteTrainerByName(string name)
     {
         var trainer = _trainerRepository.GetTrainerByName(name);
