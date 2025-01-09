@@ -119,24 +119,24 @@ public class PkmnServiceTests
 
         var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
 
-        PkmnOutDTO one = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Will", TrainerID = t.Id}));
-        PkmnOutDTO two = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Gary", TrainerID = t.Id}));
-        PkmnOutDTO three = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Tanya", TrainerID = t.Id}));
-        PkmnOutDTO four = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Paul", TrainerID = t.Id}));
-        PkmnOutDTO five = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Chuck", TrainerID = t.Id}));
-        PkmnOutDTO six = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Dave", TrainerID = t.Id}));
-        //PkmnOutDTO seven = pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id}));
+        List<Pkmn> pkmnList = [
+            new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
+            new Pkmn{Species = "Charmander", Name = "Charles"},
+            new Pkmn{Species = "Gengar", Name = "Chaolan"},
+            new Pkmn{Species = "Machamp", Name = "Fox"},
+            new Pkmn{Species = "Machamp", Name = "Harpy"},
+            new Pkmn{Species = "Machamp", Name = "Frank"}
+        ];
+
+        t.Team = mapper.Map<List<PkmnOutDTO>>(pkmnList);
 
         // Act
-        // found = mapper.Map<Pkmn>(pkmnService.GetPkmnByName(seven.Name));
         Action pkmnSeven = () => pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn{Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id}));
 
-        //Exception exception = Assert.Throws<Exception>(pkmnSeven);
+        Exception exception = Assert.Throws<Exception>(pkmnSeven);
 
         // Assert
-        //Assert.Equal("This trainer's team is already full! Please remove a pokemon first.", exception.Message);
-
-        Assert.Empty($"{newTrainer.Team.Count}");
+        Assert.Equal("This trainer's team is already full! Please remove a pokemon first.", exception.Message);
     }
 
     [Fact]
