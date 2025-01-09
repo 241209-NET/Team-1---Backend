@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonTracker.API.DTO;
-using PokemonTracker.API.Model;
 using PokemonTracker.API.Service;
 
 namespace PokemonTracker.API.Controller;
@@ -16,17 +15,31 @@ public class TrainerController : ControllerBase
     [HttpPost]
     public IActionResult CreateNewTrainer(TrainerInDTO newTrainer)
     {
-        var trainer = _trainerService.CreateNewTrainer(newTrainer);
-
-        if (trainer is null)
+        try
         {
-            return NotFound();
+            var trainer = _trainerService.CreateNewTrainer(newTrainer);
+            return Ok(trainer);
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-        // Pass in trainerInDTO
-        // return trainerOutDTO
+    [HttpGet("login")]
+    public IActionResult Login([FromBody] string username, [FromBody] string password)
+    {
+        int trainerId = -5;
 
-        return Ok(trainer);
+        try
+        {
+            trainerId = _trainerService.Login(username, password);
+            return Ok(trainerId);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
@@ -47,26 +60,29 @@ public class TrainerController : ControllerBase
     [HttpGet("name/{name}")]
     public IActionResult GetTrainerByName(string name)
     {
-        var findTrainer = _trainerService.GetTrainerByName(name);
-
-        if (findTrainer is null)
+        try
         {
-            return NotFound(); 
-        }
+            var findTrainer = _trainerService.GetTrainerByName(name);
+            return Ok(findTrainer);
 
-        return Ok(findTrainer);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("delete/{name}")]
     public IActionResult DeleteTrainerByName(string name)
     {
-        var deleteTrainer = _trainerService.DeleteTrainerByName(name);
-
-        if (deleteTrainer is null)
+        try
         {
-            return NotFound();
+            var deleteTrainer = _trainerService.DeleteTrainerByName(name);
+            return Ok(deleteTrainer);
         }
-
-        return Ok(deleteTrainer);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
