@@ -2,6 +2,8 @@ using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
 using PokemonTracker.API.DTO;
 using AutoMapper;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace PokemonTracker.API.Service;
 
@@ -17,10 +19,14 @@ public class TrainerService : ITrainerService
     }
 
     public TrainerOutDTO CreateNewTrainer(TrainerInDTO trainerIn)
-    {
-        var trainer = _mapper.Map<Trainer>(trainerIn);
+    {        
+        if (_trainerRepository.GetTrainerByUsername(trainerIn.Username) is not null)
+        {
+            throw new Exception("Duplicate Trainer");
+        }
+
+        var newTrainer = _trainerRepository.CreateNewTrainer(_mapper.Map<Trainer>(trainerIn));
         
-        var newTrainer = _trainerRepository.CreateNewTrainer(trainer);
 
         return _mapper.Map<TrainerOutDTO>(newTrainer);
     }
@@ -39,6 +45,17 @@ public class TrainerService : ITrainerService
         }
         
         return trainer.Id;
+    }
+
+    public TrainerOutDTO UpdateTrainer(UpdateDTO trainer)
+    {
+        var update = _trainerRepository.GetTrainerById(trainer.Id);
+
+        update!.Name = trainer.Name;
+
+        update = _trainerRepository.UpdateTrainer(update);
+
+        return _mapper.Map<TrainerOutDTO>(update);
     }
 
     public TrainerOutDTO? DeleteTrainerByName(string name)

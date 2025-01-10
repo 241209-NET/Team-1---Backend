@@ -6,10 +6,10 @@ public interface IPokemonRepository
 {
     Pkmn CreateNewPkmn(Pkmn pkmn);
     IEnumerable<Pkmn> GetAllPkmn();
-    IEnumerable<Pkmn> GetAllPkmnByType(string type);
-    IEnumerable<Pkmn> GetAllPkmnBySpecies(string species);
-    Pkmn GetPkmnByName(string name);
-    Pkmn? DeletePkmnByName(Pkmn pkmn);
+    Pkmn? DeletePkmn(Pkmn pkmn);
+    Pkmn GetPkmnById(int id);
+    Pkmn UpdatePkmn(Pkmn toUpdate);
+
 }
 
 public interface ITrainerRepository
@@ -21,4 +21,5 @@ public interface ITrainerRepository
     Trainer? DeleteTrainerByName(Trainer trainer);
     Trainer? GetTrainerById(int id);
     Trainer GetTrainerByUsername(string username);
+    Trainer UpdateTrainer(Trainer trainer);
 }

@@ -14,7 +14,7 @@ public class TrainerRepository : ITrainerRepository
     public Trainer CreateNewTrainer(Trainer trainer)
     {
         _trainerContext.Trainers.Add(trainer);
-        _trainerContext.SaveChanges();
+        _trainerContext.SaveChangesAsync();
         return trainer;
     }
 
@@ -53,10 +53,17 @@ public class TrainerRepository : ITrainerRepository
         return trainer;
     }
 
-    public Trainer GetTrainerByUsername(string username)
+    public Trainer? GetTrainerByUsername(string username)
     {
-        var trainer = _trainerContext.Trainers.Where(t => t.Username == username).First();
+        var trainer = _trainerContext.Trainers.Where(t => t.Username == username).FirstOrDefault();
 
+        return trainer;
+    }
+
+    public Trainer UpdateTrainer(Trainer trainer)
+    {
+        _trainerContext.Trainers.Update(trainer);
+        _trainerContext.SaveChanges();
         return trainer;
     }
 }

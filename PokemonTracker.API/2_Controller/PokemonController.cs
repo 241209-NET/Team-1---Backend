@@ -1,6 +1,7 @@
 namespace PokemonTracker.API.Controller;
 
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Service;
@@ -17,7 +18,7 @@ public class PokemonController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateNewPkmn(PkmnInDTO newPkmn)
+    public IActionResult CreateNewPkmn([FromBody] PkmnInDTO newPkmn)
     {
         try
         {
@@ -26,16 +27,37 @@ public class PokemonController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            if (ex.Message.Contains("entity changes"))
+            {
+                return Conflict("A Pokemon with this nickname already exists!");
+            }
+            else
+            {
+                return BadRequest(ex.Message);
+            }   
         }       
     }
 
-    [HttpDelete("delete/{name}")]
-    public IActionResult DeletePkmnByName(string name)
+    [HttpPatch("update")]
+    public IActionResult UpdatePkmnName([FromBody] UpdateDTO pkmn)
     {
         try
         {
-            var deletePkmn = _pokemonService.DeletePkmnByName(name);
+            var updated = _pokemonService.UpdatePkmn(pkmn);
+            return Ok(updated);
+        }
+        catch (Exception)
+        {
+            return Conflict("A Pokemon with this nickname already exists!");
+        }
+    }
+
+    [HttpDelete("delete/{id}")]
+    public IActionResult DeletePkmn(int id)
+    {
+        try
+        {
+            var deletePkmn = _pokemonService.DeletePkmn(id);
             return Ok(deletePkmn);
         }
         catch (Exception ex)
@@ -50,48 +72,4 @@ public class PokemonController : ControllerBase
         var pkmnList = _pokemonService.GetAllPkmn();
         return Ok(pkmnList);
     }
-
-    [HttpGet("name/{name}")]
-    public IActionResult GetPkmnByName(string name)
-    {
-        try
-        {
-            var findPkmn = _pokemonService.GetPkmnByName(name);
-            return Ok(findPkmn);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpGet("species/{species}")]
-    public IActionResult GetPkmnBySpecies(string species)
-    {
-        try
-        {
-            var findPkmn = _pokemonService.GetAllPkmnBySpecies(species);
-
-            return Ok(findPkmn);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpGet("type/{type}")]
-    public IActionResult GetPkmnByType(string type)
-    {
-        try
-        {
-            var findPkmn = _pokemonService.GetAllPkmnByType(type);
-            return Ok(findPkmn);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
 }

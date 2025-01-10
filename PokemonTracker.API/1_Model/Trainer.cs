@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PokemonTracker.API.Model;
 
-[Index(nameof(Name), IsUnique = true)]
 [Index(nameof(Username), IsUnique = true)]
 public class Trainer
 {

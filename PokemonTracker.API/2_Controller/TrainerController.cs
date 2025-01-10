@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using PokemonTracker.API.DTO;
 using PokemonTracker.API.Service;
 
@@ -13,7 +14,7 @@ public class TrainerController : ControllerBase
     public TrainerController(ITrainerService trainerService) => _trainerService = trainerService;
 
     [HttpPost]
-    public IActionResult CreateNewTrainer(TrainerInDTO newTrainer)
+    public IActionResult CreateNewTrainer([FromBody] TrainerInDTO newTrainer)
     {
         try
         {
@@ -22,23 +23,37 @@ public class TrainerController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return Conflict(ex.Message);
         }
     }
 
     [HttpGet("login")]
-    public IActionResult Login([FromBody] string username, [FromBody] string password)
+    public IActionResult Login([FromBody] JObject login)
     {
         int trainerId = -5;
 
         try
         {
-            trainerId = _trainerService.Login(username, password);
+            trainerId = _trainerService.Login(login["Username"]!.ToString(), login["Password"]!.ToString());
             return Ok(trainerId);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return Unauthorized(ex.Message);
+        }
+    }
+
+    [HttpPatch("update")]
+    public IActionResult UpdateTrainerName([FromBody] UpdateDTO trainer)
+    {
+        try
+        {
+            var updated = _trainerService.UpdateTrainer(trainer);
+            return Ok(updated);
+        }
+        catch (Exception ex)
+        {
+            return Conflict(ex.Message);
         }
     }
 

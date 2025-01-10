@@ -19,11 +19,24 @@ public class PokemonRepository : IPokemonRepository
         return newPkmn;
     }
 
-    public Pkmn? DeletePkmnByName(Pkmn pkmn)
+    public Pkmn UpdatePkmn(Pkmn update)
+    {
+        _pokemonContext.Pkmns.Update(update);
+        _pokemonContext.SaveChanges();
+        return update;
+    }
+
+    public Pkmn? DeletePkmn(Pkmn pkmn)
     {
         _pokemonContext.Pkmns.Remove(pkmn);
         _pokemonContext.SaveChanges();
         
+        return pkmn;
+    }
+    
+    public Pkmn GetPkmnById(int id)
+    {
+        Pkmn pkmn = _pokemonContext.Pkmns.Find(id)!;
         return pkmn;
     }
 
@@ -31,26 +44,4 @@ public class PokemonRepository : IPokemonRepository
     {
         return _pokemonContext.Pkmns.ToList();
     }
-
-    public IEnumerable<Pkmn> GetAllPkmnBySpecies(string species)
-    {
-        var pkmn = _pokemonContext.Pkmns.Where(p => p.Species.Equals(species)).ToList();
-
-        return pkmn;
-    }
-
-    public IEnumerable<Pkmn> GetAllPkmnByType(string type)
-    {
-        var pkmn = _pokemonContext.Pkmns.Where(p => p.Type.ToLower().Contains(type)).ToList();
-
-        return pkmn;
-    }
-
-    public Pkmn GetPkmnByName(string name)
-    {
-        var pkmn = _pokemonContext.Pkmns.Where(p => p.Name.Equals(name)).FirstOrDefault();
-
-        return pkmn;
-    }
-
 }
