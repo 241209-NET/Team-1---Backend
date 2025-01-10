@@ -16,12 +16,29 @@ public class TrainerService : ITrainerService
         _mapper = mapper;
     }
 
-    public TrainerOutDTO? CreateNewTrainer(TrainerInDTO trainerIn)
+    public TrainerOutDTO CreateNewTrainer(TrainerInDTO trainerIn)
     {
         var trainer = _mapper.Map<Trainer>(trainerIn);
+        
         var newTrainer = _trainerRepository.CreateNewTrainer(trainer);
 
         return _mapper.Map<TrainerOutDTO>(newTrainer);
+    }
+
+    public int Login(string username, string password)
+    {
+        var trainer = _trainerRepository.GetTrainerByUsername(username);
+
+        if (trainer is null)
+        {
+            throw new Exception("This trainer doesn't exist");
+        }
+        else if (trainer.Password != password)
+        {
+            throw new Exception("The password doesn't match");
+        }
+        
+        return trainer.Id;
     }
 
     public TrainerOutDTO? DeleteTrainerByName(string name)
@@ -30,7 +47,7 @@ public class TrainerService : ITrainerService
 
         if (trainer is null)
         {
-            return null;
+            throw new Exception("This trainer doesn't exist!");
         }
 
         var deletedTrainer = _trainerRepository.DeleteTrainerByName(trainer);
@@ -50,13 +67,22 @@ public class TrainerService : ITrainerService
 
     public TrainerOutDTO? GetTrainerByName(string name)
     {
-        if (string.IsNullOrEmpty(name)) return null;
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new Exception("The name is not vaild!");
+        }
 
         var trainer = _trainerRepository.GetTrainerByName(name);
+
+        if (trainer is null)
+        {
+            throw new Exception("This trainer does not exist!");
+        }
+
         return _mapper.Map<TrainerOutDTO>(trainer);
     }
 
-    public Trainer? GetTrainerById(int id)
+    public Trainer GetTrainerById(int id)
     {
         var trainer = _trainerRepository.GetTrainerById(id);
 
