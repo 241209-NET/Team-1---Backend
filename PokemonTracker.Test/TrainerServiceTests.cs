@@ -78,6 +78,14 @@ public class TrainerServiceTests
 
 
 
+
+
+
+
+
+
+
+
     [Fact]
     public void GetTrainerByName_Exists_Test()
     {
@@ -123,10 +131,7 @@ public class TrainerServiceTests
     }
 
 
-
-
-
-    [Fact]                  ///////// need to revise for 
+    [Fact]                  
     public void GetTrainerByName_DoesntExist_Test()
     {
         // Arrange
@@ -144,36 +149,34 @@ public class TrainerServiceTests
         // // mock the mapper to see if mapped successfully to all fields of an OutDTO,
         // // then, wherever in this test we pass in a Trainer object, will substitute it with 
         // // a TrainerOutDTO instead.
-        // mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>())).Returns((Trainer t) => new TrainerOutDTO
-        // {
-        //     Id = t.Id,
-        //     Name = t.Name,
-        //     Team = t.Team.Select(p => new PkmnOutDTO()).ToList()
-        // });
+        mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>())).Returns((Trainer t) => new TrainerOutDTO
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Team = t.Team.Select(p => new PkmnOutDTO()).ToList()
+        });
 
-        // // mock trainer to be got:
-        // Trainer chosenTrainer = new Trainer { Name = "Serena" };
+        // mock list of trainers
+        List<Trainer> trainerList = [
+            new Trainer{ Name = "Ash" },
+            new Trainer{ Name = "Brock" },
+            new Trainer{ Name = "Misty" }
+        ];
 
-        // // mock get trainer by name:
-        // mockTrainerRepo.Setup(repo => repo.GetTrainerByName("Serena"))
-        //     .Returns(chosenTrainer);
+        // mock a non-existent trainer name
+        string ghostTrainerName = "Grunch";
 
-        // // Act
-        // var res = trainerService.GetTrainerByName("Serena");
+        // mock get trainer by name 
+        // should use var name instead of literal string Grunch here.
+        mockTrainerRepo.Setup(repo => repo.GetTrainerByName(It.Is<string>(name => name == ghostTrainerName)))
+            .Returns((string name) => trainerList.FirstOrDefault(t => t.Name == name));
 
-        // // Assert
-        // Assert.NotNull(res);
-        // // check each field of dto to make sure success of dto mapping.
-        // // cannot do Assert.Equal(chosenTrainer, res) cuz 1 is Trainer obj and res is dto obj.
-        // Assert.Equal(chosenTrainer.Name, res.Name);
-        // Assert.Equal(chosenTrainer.Id, res.Id);
-        // Assert.Equal(chosenTrainer.Team.Count, res.Team.Count);
+        // Act
+        var exception = Assert.Throws<Exception>(() => trainerService.DeleteTrainerByName(ghostTrainerName));
+
+        // Assert
+        Assert.Equal("This trainer doesn't exist!", exception.Message);
     }
-
-
-
-
-
 
 
     [Fact]
@@ -233,7 +236,7 @@ public class TrainerServiceTests
     }
 
 
-    [Fact]
+    [Fact]                                     
     public void DeleteTrainerByName_DoesntExist_Test()
     {
         // Arrange
@@ -276,9 +279,9 @@ public class TrainerServiceTests
         // don't mock delete trainer by name for deletion since we will halt at failed get by name.
 
         // Act
-        var deletedTrainerDto = trainerService.DeleteTrainerByName(ghostTrainerName);
+        var exception = Assert.Throws<Exception>(() => trainerService.DeleteTrainerByName(ghostTrainerName));
 
         // Assert
-        Assert.Null(deletedTrainerDto);
+        Assert.Equal("This trainer doesn't exist!", exception.Message);
     }
 }

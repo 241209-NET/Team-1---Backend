@@ -76,7 +76,7 @@ public class TrainerService : ITrainerService
 
         if (trainer is null)
         {
-            throw new Exception("This trainer does not exist!");
+            throw new Exception("This trainer doesn't exist!");
         }
 
         return _mapper.Map<TrainerOutDTO>(trainer);
