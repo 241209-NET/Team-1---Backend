@@ -43,6 +43,7 @@ public class PokemonService : IPokemonService
 
         update.Name = pkmn.Name;
 
+<<<<<<< HEAD
         update = _pokemonRepository.UpdatePkmn(update);
 
         return _mapper.Map<PkmnOutDTO>(update);
@@ -52,6 +53,10 @@ public class PokemonService : IPokemonService
     {
         var deletedPkmn = _pokemonRepository.DeletePkmn(_pokemonRepository.GetPkmnById(id));
         return _mapper.Map<PkmnOutDTO>(deletedPkmn);
+=======
+        var deletedPkmn = _pokemonRepository.DeletePkmnByName(pkmn);
+        return _mapper.Map<PkmnOutDTO>(pkmn);
+>>>>>>> origin/main
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmn()
