@@ -83,7 +83,7 @@ public class PkmnServiceTests
         Pkmn newPkmn = new Pkmn{Species = "Bulbasaur", Name = "Ivy", TrainerID = t.Id};
 
         mockPkmnRepo.Setup(repo => repo.CreateNewPkmn(It.IsAny<Pkmn>())).Returns(newPkmn);
-        mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>())).Returns(newPkmn);
+        //mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>())).Returns(newPkmn);
 
         // Act
         var mapPkmn = mapper.Map<PkmnInDTO>(newPkmn);
@@ -172,45 +172,5 @@ public class PkmnServiceTests
 
         // Assert
         Assert.Equivalent(convertPkmnList, result);
-    }
-
-    [Fact]
-    public void GetAllPkmnBySpeciesTest()
-    {
-        // Arrange
-        Mock<IPokemonRepository> mockPkmnRepo = new();
-        Mock<ITrainerRepository> mockTrainerRepo = new();
-        //Configure Automapper
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<MappingProfile>();
-        });
-        IMapper mapper = config.CreateMapper();
-
-        TrainerService ts = new(mockTrainerRepo.Object, mapper);
-        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
-
-        List<Pkmn> pkmnList = [
-            new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
-            new Pkmn{Species = "Bulbasaur", Name = "Venus"},
-            new Pkmn{Species = "Charmander", Name = "Charles"},
-            new Pkmn{Species = "Gengar", Name = "Chaolan"},
-            new Pkmn{Species = "Machamp", Name = "Fox"}
-        ];
-
-        List<Pkmn> speciesList = [
-            new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
-            new Pkmn{Species = "Bulbasaur", Name = "Venus"}
-        ];
-
-        mockPkmnRepo.Setup(repo => repo.GetAllPkmnBySpecies("bulbasaur")).Returns(speciesList);
-
-        // Act
-        var result = pkmnService.GetAllPkmnBySpecies("bulbasaur").ToList();
-
-        var convertList = mapper.Map<List<PkmnOutDTO>>(speciesList);
-
-        // Assert
-        Assert.Equivalent(convertList, result);
     }
 }

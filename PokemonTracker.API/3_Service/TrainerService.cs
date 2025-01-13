@@ -109,6 +109,4 @@ public class TrainerService : ITrainerService
     
         return trainer;
     }
-
-
 }
