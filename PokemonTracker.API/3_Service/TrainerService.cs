@@ -84,11 +84,6 @@ public class TrainerService : ITrainerService
 
     public TrainerOutDTO? GetTrainerByName(string name)
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new Exception("The name is not vaild!");
-        }
-
         var trainer = _trainerRepository.GetTrainerByName(name);
 
         if (trainer is null)

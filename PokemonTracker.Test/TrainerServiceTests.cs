@@ -42,6 +42,37 @@ public class TrainerServiceTests
     }
 
     [Fact]
+    public void CreateNewTrainerDuplicateTest()
+    {
+
+    }
+
+     [Fact]
+    public void LoginTest()
+    {
+        
+    }
+
+    [Fact]
+    public void LoginTrainerNullTest()
+    {
+        
+    }
+
+    [Fact]
+    public void LoginPasswordMatchTest()
+    {
+        
+    }
+
+    [Fact]
+    public void UpdateTrainerTest()
+    {
+        
+    }
+
+
+    [Fact]
     public void GetAllTrainersTest()
     {
         // Arrange
