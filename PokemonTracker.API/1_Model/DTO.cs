@@ -25,6 +25,13 @@ public class TrainerInDTO
     public string Password { get; set; } = "";
 }
 
+[Index(nameof(Username), IsUnique = true)]
+public class LoginDTO
+{
+    public string Username { get; set; } = "";
+    public string Password { get; set; } = "";
+}
+
 public class UpdateDTO
 {
     public int Id { get; set;}

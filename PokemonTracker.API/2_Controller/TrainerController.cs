@@ -28,13 +28,13 @@ public class TrainerController : ControllerBase
     }
 
     [HttpGet("login")]
-    public IActionResult Login([FromBody] JObject login)
+    public IActionResult Login([FromBody] LoginDTO login)
     {
         int trainerId = -5;
 
         try
         {
-            trainerId = _trainerService.Login(login["Username"]!.ToString(), login["Password"]!.ToString());
+            trainerId = _trainerService.Login(login.Username, login.Password);
             return Ok(trainerId);
         }
         catch (Exception ex)
