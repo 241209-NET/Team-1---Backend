@@ -1,5 +1,7 @@
+using System.Collections.Immutable;
 using AutoMapper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PokeApiNet;
 using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
@@ -22,75 +24,39 @@ public class PokemonService : IPokemonService
 
     public PkmnOutDTO? CreateNewPkmn(PkmnInDTO newPkmn)
     {
-        int trainerID = newPkmn.TrainerID;
+        Pkmn jsonPkmn =  _mapper.Map<Pkmn>(newPkmn);
+        int trainerID = jsonPkmn.TrainerID;
 
         var trainer = _trainerService.GetTrainerById(trainerID);
 
-
-        if (GetPkmnByName(newPkmn.Name) is not null)
+        if (trainer!.Team.Count >= 6)
         {
-            throw new Exception("This Pokemon already exists!");
-        }
-        if (trainer.Team.Count >= 6)
-        {
-            Console.WriteLine("TRAINER" + trainer.Team.Count);
             throw new Exception("This trainer's team is already full! Please remove a pokemon first.");
         }
-
-        Pkmn pkmn = _mapper.Map<Pkmn>(newPkmn);
-
-        pkmn.Species = newPkmn.Species;
-
-        pkmn.Type = newPkmn.Type;
-
-        pkmn.Type = pkmn.Type.Trim().Replace(" ", "/");
-
-        pkmn.PokedexDesc = newPkmn.PokedexDesc;
         
-        return _mapper.Map<PkmnOutDTO>(_pokemonRepository.CreateNewPkmn(pkmn));
+        return _mapper.Map<PkmnOutDTO>(_pokemonRepository.CreateNewPkmn(jsonPkmn));
     }
 
-    public PkmnOutDTO? DeletePkmnByName(string name)
+    public PkmnOutDTO UpdatePkmn(UpdateDTO pkmn)
     {
-        var pkmn = _pokemonRepository.GetPkmnByName(name);
+        var update = _pokemonRepository.GetPkmnById(pkmn.Id);
 
-        if (pkmn is null)
-        {
-            throw new Exception("This pokemon does not exist!");
-        }
+        update.Name = pkmn.Name;
 
-        var deletedPkmn = _pokemonRepository.DeletePkmnByName(pkmn);
-        return _mapper.Map<PkmnOutDTO>(pkmn);
+        update = _pokemonRepository.UpdatePkmn(update);
+
+        return _mapper.Map<PkmnOutDTO>(update);
+    }
+
+    public PkmnOutDTO? DeletePkmn(int id)
+    {
+        var deletedPkmn = _pokemonRepository.DeletePkmn(_pokemonRepository.GetPkmnById(id));
+        return _mapper.Map<PkmnOutDTO>(deletedPkmn);
     }
 
     public IEnumerable<PkmnOutDTO> GetAllPkmn()
     {
         var pkmnList = _pokemonRepository.GetAllPkmn();
         return _mapper.Map<List<PkmnOutDTO>>(pkmnList);
-    }
-
-    public IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species)
-    {
-        var speciesList = _pokemonRepository.GetAllPkmnBySpecies(species);
-        return _mapper.Map<List<PkmnOutDTO>>(speciesList);
-    }
-
-    public IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type)
-    {
-        type = type.ToLower();
-        var typeList = _pokemonRepository.GetAllPkmnByType(type);
-        return _mapper.Map<List<PkmnOutDTO>>(typeList);
-    }
-
-    public PkmnOutDTO? GetPkmnByName(string name)
-    {
-        var pkmn = _pokemonRepository.GetPkmnByName(name);
-
-        if (pkmn is null)
-        {
-            throw new Exception("This pokemon does not exist!");
-        }
-        
-        return _mapper.Map<PkmnOutDTO>(pkmn);
     }
 }

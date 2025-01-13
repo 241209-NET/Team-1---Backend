@@ -57,45 +57,6 @@ public class PkmnServiceTests
   }
 
   [Fact]
-  public void CreateNewPkmnAlreadyExistsTest()
-  {
-    // Arrange
-    Mock<IPokemonRepository> mockPkmnRepo = new();
-    Mock<ITrainerRepository> mockTrainerRepo = new();
-    //Configure Automapper
-    var config = new MapperConfiguration(cfg =>
-    {
-      cfg.AddProfile<MappingProfile>();
-    });
-    IMapper mapper = config.CreateMapper();
-
-    TrainerService ts = new(mockTrainerRepo.Object, mapper);
-    PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
-
-    Trainer newTrainer = new Trainer { Id = 0, Name = "Harry" };
-
-    mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
-    mockTrainerRepo.Setup(repo => repo.GetTeam(It.IsAny<string>())).Returns([newTrainer]);
-    mockTrainerRepo.Setup(repo => repo.GetTrainerById(It.IsAny<int>())).Returns(newTrainer);
-
-    var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
-
-    Pkmn newPkmn = new Pkmn { Species = "Bulbasaur", Name = "Ivy", TrainerID = t.Id };
-
-    mockPkmnRepo.Setup(repo => repo.CreateNewPkmn(It.IsAny<Pkmn>())).Returns(newPkmn);
-    //mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>())).Returns(newPkmn);
-
-    // Act
-    var mapPkmn = mapper.Map<PkmnInDTO>(newPkmn);
-    Action exists = () => pkmnService.CreateNewPkmn(mapPkmn);
-
-    Exception exception = Assert.Throws<Exception>(exists);
-
-    // Assert
-    Assert.Equal("This Pokemon already exists!", exception.Message);
-  }
-
-  [Fact]
   public void CreateNewPkmnTeamFullTest()
   {
     // Arrange
@@ -114,10 +75,6 @@ public class PkmnServiceTests
     Trainer newTrainer = new Trainer { Id = 0, Name = "Kyle" };
 
     mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
-    mockTrainerRepo.Setup(repo => repo.GetTeam(It.IsAny<string>())).Returns([newTrainer]);
-    mockTrainerRepo.Setup(repo => repo.GetTrainerById(It.IsAny<int>())).Returns(newTrainer);
-
-    var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
 
     List<Pkmn> pkmnList = [
         new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
@@ -125,18 +82,33 @@ public class PkmnServiceTests
             new Pkmn{Species = "Gengar", Name = "Chaolan"},
             new Pkmn{Species = "Machamp", Name = "Fox"},
             new Pkmn{Species = "Machamp", Name = "Harpy"},
-            new Pkmn{Species = "Machamp", Name = "Frank"}
-    ];
+            new Pkmn{Species = "Machamp", Name = "Frank"},
+        ];
+
+    var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
+    Pkmn newPkmn = new Pkmn { Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id };
 
     t.Team = mapper.Map<List<PkmnOutDTO>>(pkmnList);
 
+    mockTrainerRepo.Setup(repo => repo.GetTeam(It.IsAny<string>())).Returns([newTrainer]);
+    mockTrainerRepo.Setup(repo => repo.GetTrainerById(It.IsAny<int>())).Returns(newTrainer);
+    mockPkmnRepo.Setup(repo => repo.CreateNewPkmn(It.IsAny<Pkmn>())).Returns(newPkmn);
+
     // Act
-    Action pkmnSeven = () => pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(new Pkmn { Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id }));
+    Action pkmnSeven = () => pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(newPkmn));
+
+    Assert.Empty("SIZE " + t.Team.Count);
 
     Exception exception = Assert.Throws<Exception>(pkmnSeven);
 
     // Assert
     Assert.Equal("This trainer's team is already full! Please remove a pokemon first.", exception.Message);
+  }
+
+  [Fact]
+  public void UpdatePkmnTest()
+  {
+
   }
 
   [Fact]
@@ -173,163 +145,49 @@ public class PkmnServiceTests
     // Assert
     Assert.Equivalent(convertPkmnList, result);
   }
-<<<<<<< HEAD
-=======
 
-    [Fact]
-    public void GetAllPkmnBySpeciesTest()
+  [Fact]
+  public void DeletePkmnTest()
+  {
+    // Arrange
+    Mock<IPokemonRepository> mockPkmnRepo = new();
+    Mock<ITrainerRepository> mockTrainerRepo = new();
+
+    // Configure Automapper
+    var config = new MapperConfiguration(cfg =>
     {
-        // Arrange
-        Mock<IPokemonRepository> mockPkmnRepo = new();
-        Mock<ITrainerRepository> mockTrainerRepo = new();
-        //Configure Automapper
-        var config = new MapperConfiguration(cfg =>
+      cfg.AddProfile<MappingProfile>();
+    });
+    IMapper mapper = config.CreateMapper();
+
+    TrainerService ts = new(mockTrainerRepo.Object, mapper);
+    PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
+
+    List<Pkmn> pkmnList = new List<Pkmn>
         {
-            cfg.AddProfile<MappingProfile>();
-        });
-        IMapper mapper = config.CreateMapper();
-
-        TrainerService ts = new(mockTrainerRepo.Object, mapper);
-        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
-
-        List<Pkmn> pkmnList = [
-            new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
-            new Pkmn{Species = "Bulbasaur", Name = "Venus"},
-            new Pkmn{Species = "Charmander", Name = "Charles"},
-            new Pkmn{Species = "Gengar", Name = "Chaolan"},
-            new Pkmn{Species = "Machamp", Name = "Fox"}
-        ];
-
-        List<Pkmn> speciesList = [
-            new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
-            new Pkmn{Species = "Bulbasaur", Name = "Venus"}
-        ];
-
-        mockPkmnRepo.Setup(repo => repo.GetAllPkmnBySpecies("bulbasaur")).Returns(speciesList);
-
-        // Act
-        var result = pkmnService.GetAllPkmnBySpecies("bulbasaur").ToList();
-
-        var convertList = mapper.Map<List<PkmnOutDTO>>(speciesList);
-
-        // Assert
-        Assert.Equivalent(convertList, result);
-    }
-
-    [Fact]
-    public void GetPkmnByName()
-    {
-        // Arrange
-        Mock<IPokemonRepository> mockPkmnRepo = new();
-        Mock<ITrainerRepository> mockTrainerRepo = new();
-        //Configure Automapper
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<MappingProfile>();
-        });
-        IMapper mapper = config.CreateMapper();
-
-        TrainerService ts = new(mockTrainerRepo.Object, mapper);
-        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
-
-        Pkmn newPkmn = new Pkmn{Species = "Dialga", Name = "Ea"};
-
-        mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>())).Returns(newPkmn);
-
-        // Act
-        var result = mapper.Map<Pkmn>(pkmnService.GetPkmnByName("Dialga"));
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(newPkmn.Species, result.Species); // Compare the Species property
-        Assert.Equal(newPkmn.Name, result.Name);       // Compare the Name property
-        mockPkmnRepo.Verify(x => x.GetPkmnByName(It.IsAny<string>()), Times.Once());
-    }
-
-    [Fact]
-    public void DeletePkmnByNameTest()
-    {
-        // Arrange
-        Mock<IPokemonRepository> mockPkmnRepo = new();
-        Mock<ITrainerRepository> mockTrainerRepo = new();
-
-        // Configure Automapper
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<MappingProfile>();
-        });
-        IMapper mapper = config.CreateMapper();
-
-        TrainerService ts = new(mockTrainerRepo.Object, mapper);
-        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
-
-        List<Pkmn> pkmnList = new List<Pkmn>
-        {
-            new Pkmn { Species = "Bulbasaur", Name = "Ivy" },
-            new Pkmn { Species = "Bulbasaur", Name = "Venus" },
-            new Pkmn { Species = "Charmander", Name = "Charles" },
-            new Pkmn { Species = "Gengar", Name = "Chaolan" },
-            new Pkmn { Species = "Machamp", Name = "Fox" }
+            new Pkmn { Id = 0, Species = "Bulbasaur", Name = "Ivy" },
+            new Pkmn { Id = 1, Species = "Bulbasaur", Name = "Venus" },
+            new Pkmn { Id = 2, Species = "Charmander", Name = "Charles" },
+            new Pkmn { Id = 3, Species = "Gengar", Name = "Chaolan" },
+            new Pkmn { Id = 4, Species = "Machamp", Name = "Fox" }
         };
 
-        Pkmn newPkmn = new Pkmn { Species = "Charmander", Name = "Charles" };
+    Pkmn newPkmn = new Pkmn { Id = 2, Species = "Charmander", Name = "Charles" };
 
-        mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>()))
-                .Returns((string name) => pkmnList.Find(p => p.Name == name));
+    //mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>()))
+    // .Returns((string name) => pkmnList.Find(p => p.Name == name));
 
-        mockPkmnRepo.Setup(repo => repo.DeletePkmnByName(It.IsAny<Pkmn>()))
-                .Callback<Pkmn>(pkmn => pkmnList.Remove(pkmn));
+    mockPkmnRepo.Setup(repo => repo.DeletePkmn(It.IsAny<Pkmn>()))
+            .Callback<Pkmn>(pkmn => pkmnList.Remove(pkmn)).Returns(newPkmn);
 
-        // Act
-        var deletedPkmn = mapper.Map<Pkmn>(pkmnService.DeletePkmnByName(newPkmn.Name));
+    // Act
+    var deletedPkmn = mapper.Map<Pkmn>(pkmnService.DeletePkmn(newPkmn.Id));
 
-        // Assert
-        Assert.NotNull(deletedPkmn);
-        Assert.Equal(newPkmn.Name, deletedPkmn.Name);
-        Assert.DoesNotContain(deletedPkmn, pkmnList); // Ensure the Pokémon is removed from the list
-        mockPkmnRepo.Verify(x => x.GetPkmnByName(It.IsAny<string>()), Times.Once());
-        mockPkmnRepo.Verify(x => x.DeletePkmnByName(It.IsAny<Pkmn>()), Times.Once());
-    }
-
-    [Fact]
-    public void DeletePkmnByNameTestNullCheck()
-    {
-        // Arrange
-        Mock<IPokemonRepository> mockPkmnRepo = new();
-        Mock<ITrainerRepository> mockTrainerRepo = new();
-
-        // Configure Automapper
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<MappingProfile>();
-        });
-        IMapper mapper = config.CreateMapper();
-
-        TrainerService ts = new(mockTrainerRepo.Object, mapper);
-        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
-
-        List<Pkmn> pkmnList = new List<Pkmn>
-        {
-            new Pkmn { Species = "Bulbasaur", Name = "Ivy" },
-            new Pkmn { Species = "Bulbasaur", Name = "Venus" },
-            new Pkmn { Species = "Charmander", Name = "Charles" },
-            new Pkmn { Species = "Gengar", Name = "Chaolan" },
-            new Pkmn { Species = "Machamp", Name = "Fox" }
-        };
-
-        Pkmn newPkmn = new Pkmn { Species = "Charmander", Name = "Frank" };
-
-        mockPkmnRepo.Setup(repo => repo.GetPkmnByName(It.IsAny<string>()))
-                .Returns((string name) => pkmnList.Find(p => p.Name == name));
-
-        mockPkmnRepo.Setup(repo => repo.DeletePkmnByName(It.IsAny<Pkmn>()))
-                .Callback<Pkmn>(pkmn => pkmnList.Remove(pkmn));
-
-        // Act
-        var deletedPkmn = mapper.Map<Pkmn>(pkmnService.DeletePkmnByName(newPkmn.Name));
-
-        // Assert
-        Assert.Null(deletedPkmn);
-        mockPkmnRepo.Verify(x => x.GetPkmnByName(It.IsAny<string>()), Times.Once());
-    }
+    // Assert
+    Assert.NotNull(deletedPkmn);
+    Assert.Equal(newPkmn.Name, deletedPkmn.Name);
+    Assert.DoesNotContain(deletedPkmn, pkmnList); // Ensure the Pokémon is removed from the list
+                                                  //mockPkmnRepo.Verify(x => x.GetPkmnByName(It.IsAny<string>()), Times.Once());
+    mockPkmnRepo.Verify(x => x.DeletePkmn(It.IsAny<Pkmn>()), Times.Once());
+  }
 }

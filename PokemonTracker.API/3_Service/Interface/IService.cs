@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using PokemonTracker.API.DTO;
 using PokemonTracker.API.Model;
 
@@ -7,10 +8,8 @@ public interface IPokemonService
 {
     PkmnOutDTO? CreateNewPkmn(PkmnInDTO pkmn);
     IEnumerable<PkmnOutDTO> GetAllPkmn();
-    IEnumerable<PkmnOutDTO> GetAllPkmnByType(string type);
-    IEnumerable<PkmnOutDTO> GetAllPkmnBySpecies(string species);
-    PkmnOutDTO? GetPkmnByName(string name);
-    PkmnOutDTO? DeletePkmnByName(string name);
+    PkmnOutDTO? DeletePkmn(int id);
+    PkmnOutDTO UpdatePkmn(UpdateDTO toUpdate);
 }
 
 public interface ITrainerService
@@ -22,4 +21,5 @@ public interface ITrainerService
     TrainerOutDTO? DeleteTrainerByName(string name);
     Trainer? GetTrainerById(int id);
     int Login(string username, string password);
+    TrainerOutDTO UpdateTrainer(UpdateDTO toUpdate);
 }
