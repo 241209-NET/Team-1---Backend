@@ -5,6 +5,7 @@ namespace PokemonTracker.API.DTO;
 [Index(nameof(TrainerID), nameof(Name), IsUnique = true)]
 public class PkmnInDTO
 {
+    public int DexNumber { get; set; }
     public string Species { get; set; } = "";
     public string Name { get; set; } = "";
     public int TrainerID { get; set; }
@@ -13,6 +14,7 @@ public class PkmnInDTO
 public class PkmnOutDTO
 {
     public int Id { get; set; }
+    public int DexNumber { get; set; }
     public string Species { get; set; } = "";
     public string Name { get; set; } = "";
 }
