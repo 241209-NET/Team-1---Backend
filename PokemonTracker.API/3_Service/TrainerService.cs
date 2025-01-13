@@ -2,6 +2,8 @@ using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
 using PokemonTracker.API.DTO;
 using AutoMapper;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace PokemonTracker.API.Service;
 
@@ -10,7 +12,7 @@ public class TrainerService : ITrainerService
     private readonly ITrainerRepository _trainerRepository;
     private readonly IMapper _mapper;
 
-    public TrainerService(ITrainerRepository trainerRepository, IMapper mapper) 
+    public TrainerService(ITrainerRepository trainerRepository, IMapper mapper)
     {
         _trainerRepository = trainerRepository;
         _mapper = mapper;
@@ -18,9 +20,13 @@ public class TrainerService : ITrainerService
 
     public TrainerOutDTO CreateNewTrainer(TrainerInDTO trainerIn)
     {
-        var trainer = _mapper.Map<Trainer>(trainerIn);
-        
-        var newTrainer = _trainerRepository.CreateNewTrainer(trainer);
+        if (_trainerRepository.GetTrainerByUsername(trainerIn.Username) is not null)
+        {
+            throw new Exception("Duplicate Trainer");
+        }
+
+        var newTrainer = _trainerRepository.CreateNewTrainer(_mapper.Map<Trainer>(trainerIn));
+
 
         return _mapper.Map<TrainerOutDTO>(newTrainer);
     }
@@ -37,8 +43,19 @@ public class TrainerService : ITrainerService
         {
             throw new Exception("The password doesn't match");
         }
-        
+
         return trainer.Id;
+    }
+
+    public TrainerOutDTO UpdateTrainer(UpdateDTO trainer)
+    {
+        var update = _trainerRepository.GetTrainerById(trainer.Id);
+
+        update!.Name = trainer.Name;
+
+        update = _trainerRepository.UpdateTrainer(update);
+
+        return _mapper.Map<TrainerOutDTO>(update);
     }
 
     public TrainerOutDTO? DeleteTrainerByName(string name)
@@ -57,9 +74,9 @@ public class TrainerService : ITrainerService
     public IEnumerable<TrainerOutDTO> GetAllTrainers()
     {
         var trainerList = _trainerRepository.GetAllTrainers();
-        return _mapper.Map<List<TrainerOutDTO>>(trainerList);       
+        return _mapper.Map<List<TrainerOutDTO>>(trainerList);
     }
- 
+
     public IEnumerable<TrainerOutDTO> GetTeam(string name)
     {
         return _mapper.Map<IEnumerable<TrainerOutDTO>>(_trainerRepository.GetTeam(name));
@@ -76,7 +93,7 @@ public class TrainerService : ITrainerService
 
         if (trainer is null)
         {
-            throw new Exception("This trainer doesn't exist!");
+            throw new Exception("This trainer does not exist!");
         }
 
         return _mapper.Map<TrainerOutDTO>(trainer);
@@ -86,17 +103,10 @@ public class TrainerService : ITrainerService
     {
         var trainer = _trainerRepository.GetTrainerById(id);
 
-        if (trainer is null)
-        {
-            throw new Exception("This trainer doesn't exist!");
-        }
-
-        var team = GetTeam(trainer.Name);
+        var team = GetTeam(trainer!.Name);
 
         trainer.Team = _mapper.Map<List<Pkmn>>(team.ElementAt(0).Team);
-    
+
         return trainer;
     }
-
-
 }
