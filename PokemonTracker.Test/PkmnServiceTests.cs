@@ -72,10 +72,6 @@ public class PkmnServiceTests
     TrainerService ts = new(mockTrainerRepo.Object, mapper);
     PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
 
-    Trainer newTrainer = new Trainer { Id = 0, Name = "Kyle" };
-
-    mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
-
     List<Pkmn> pkmnList = [
         new Pkmn{Species = "Bulbasaur", Name = "Ivy"},
             new Pkmn{Species = "Charmander", Name = "Charles"},
@@ -84,6 +80,11 @@ public class PkmnServiceTests
             new Pkmn{Species = "Machamp", Name = "Harpy"},
             new Pkmn{Species = "Machamp", Name = "Frank"},
         ];
+
+    Trainer newTrainer = new Trainer { Id = 0, Name = "Kyle", Team = pkmnList };
+
+    mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
+
 
     var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
     Pkmn newPkmn = new Pkmn { Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id };
@@ -96,10 +97,8 @@ public class PkmnServiceTests
 
     // Act
     Action pkmnSeven = () => pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(newPkmn));
-
-    Assert.Empty("SIZE " + t.Team.Count);
-
     Exception exception = Assert.Throws<Exception>(pkmnSeven);
+    //Pkmn pkmnSeven = mapper.Map<Pkmn>(pkmnService.CreateNewPkmn(mapper.Map<PkmnInDTO>(newPkmn)));
 
     // Assert
     Assert.Equal("This trainer's team is already full! Please remove a pokemon first.", exception.Message);
