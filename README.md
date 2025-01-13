@@ -39,7 +39,7 @@ A web app hosted on Azure where trainers can sign up, look through the different
 - Trainers can have multiple teams
 
 ## ERD
-![ERD](image.png)
+![ERD](ERD.png)
 
 ## External API: 
 - PokeAPI
