@@ -338,13 +338,43 @@ public class TrainerServiceTests
     [Fact]
     public void LoginTest()
     {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+        var mockMapper = new Mock<IMapper>();
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mockMapper.Object);
 
+        Trainer t = new Trainer { Id = 0, Name = "Bob", Username = "admin", Password = "password" };
+
+        mockTrainerRepo.Setup(repo => repo.GetTrainerByUsername(t.Username)).Returns(t);
+
+        //Act
+        var result = trainerService.Login(t.Username, t.Password);
+        //Assert
+
+        Assert.NotNull(result);
+        Assert.Equal(t.Name, result.Name);
+        mockTrainerRepo.Verify(x => x.GetTrainerByUsername(It.IsAny<string>()), Times.Once());
     }
 
     [Fact]
     public void LoginTrainerNullTest()
     {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+        var mockMapper = new Mock<IMapper>();
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mockMapper.Object);
 
+        Trainer t = new Trainer { Id = 0, Name = "Bob", Username = "admin", Password = "password" };
+        Trainer test = null;
+        mockTrainerRepo.Setup(repo => repo.GetTrainerByUsername(t.Username)).Returns(test);
+
+        //Act
+        Action result = () => trainerService.Login(t.Username, t.Password);
+        Exception exception = Assert.Throws<Exception>(result);
+
+        //Assert
+        Assert.Equal("This trainer doesn't exist", exception.Message);
+        mockTrainerRepo.Verify(x => x.GetTrainerByUsername(It.IsAny<string>()), Times.Once());
     }
 
     [Fact]
