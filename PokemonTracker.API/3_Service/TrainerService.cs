@@ -12,21 +12,21 @@ public class TrainerService : ITrainerService
     private readonly ITrainerRepository _trainerRepository;
     private readonly IMapper _mapper;
 
-    public TrainerService(ITrainerRepository trainerRepository, IMapper mapper) 
+    public TrainerService(ITrainerRepository trainerRepository, IMapper mapper)
     {
         _trainerRepository = trainerRepository;
         _mapper = mapper;
     }
 
     public TrainerOutDTO CreateNewTrainer(TrainerInDTO trainerIn)
-    {        
+    {
         if (_trainerRepository.GetTrainerByUsername(trainerIn.Username) is not null)
         {
             throw new Exception("Duplicate Trainer");
         }
 
         var newTrainer = _trainerRepository.CreateNewTrainer(_mapper.Map<Trainer>(trainerIn));
-        
+
 
         return _mapper.Map<TrainerOutDTO>(newTrainer);
     }
@@ -43,7 +43,7 @@ public class TrainerService : ITrainerService
         {
             throw new Exception("The password doesn't match");
         }
-        
+
         return trainer.Id;
     }
 
@@ -74,9 +74,9 @@ public class TrainerService : ITrainerService
     public IEnumerable<TrainerOutDTO> GetAllTrainers()
     {
         var trainerList = _trainerRepository.GetAllTrainers();
-        return _mapper.Map<List<TrainerOutDTO>>(trainerList);       
+        return _mapper.Map<List<TrainerOutDTO>>(trainerList);
     }
- 
+
     public IEnumerable<TrainerOutDTO> GetTeam(string name)
     {
         return _mapper.Map<IEnumerable<TrainerOutDTO>>(_trainerRepository.GetTeam(name));
@@ -101,7 +101,7 @@ public class TrainerService : ITrainerService
         var team = GetTeam(trainer!.Name);
 
         trainer.Team = _mapper.Map<List<Pkmn>>(team.ElementAt(0).Team);
-    
+
         return trainer;
     }
 }

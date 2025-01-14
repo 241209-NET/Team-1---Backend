@@ -32,7 +32,7 @@ public class PkmnServiceTests
             new Pkmn{Species = "Machamp", Name = "Fox"}
         ];
 
-        Trainer newTrainer = new Trainer{Id = 0, Name = "Jeff"};
+        Trainer newTrainer = new Trainer { Id = 0, Name = "Jeff" };
 
         mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
         mockTrainerRepo.Setup(repo => repo.GetTeam(It.IsAny<string>())).Returns([newTrainer]);
@@ -40,7 +40,7 @@ public class PkmnServiceTests
 
         TrainerOutDTO t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
 
-        Pkmn newPkmn = new Pkmn{Species = "Dialga", Name = "Ea", TrainerID = t.Id};
+        Pkmn newPkmn = new Pkmn { Species = "Dialga", Name = "Ea", TrainerID = t.Id };
 
         mockPkmnRepo.Setup(repo => repo.CreateNewPkmn(It.IsAny<Pkmn>()))
             .Callback((Pkmn p) => pkmnList.Add(p))
