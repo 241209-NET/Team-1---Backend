@@ -31,7 +31,7 @@ public class TrainerService : ITrainerService
         return _mapper.Map<TrainerOutDTO>(newTrainer);
     }
 
-    public int Login(string username, string password)
+    public Trainer Login(string username, string password)
     {
         var trainer = _trainerRepository.GetTrainerByUsername(username);
 
@@ -44,7 +44,7 @@ public class TrainerService : ITrainerService
             throw new Exception("The password doesn't match");
         }
 
-        return trainer.Id;
+        return trainer;
     }
 
     public TrainerOutDTO UpdateTrainer(UpdateDTO trainer)

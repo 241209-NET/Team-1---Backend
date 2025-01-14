@@ -20,6 +20,6 @@ public interface ITrainerService
     IEnumerable<TrainerOutDTO> GetTeam(string name);
     TrainerOutDTO? DeleteTrainerByName(string name);
     Trainer? GetTrainerById(int id);
-    int Login(string username, string password);
+    Trainer Login(string username, string password);
     TrainerOutDTO UpdateTrainer(UpdateDTO toUpdate);
 }
