@@ -31,7 +31,6 @@ public class TrainerController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginDTO login)
     {
-
         try
         {
             Trainer trainer = _trainerService.Login(login.Username, login.Password);
