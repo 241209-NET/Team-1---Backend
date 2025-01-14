@@ -26,7 +26,7 @@ public class TrainerServiceTests
             new Trainer{Name = "Misty"}
         ];
 
-        Trainer newTrainer = new Trainer{Name = "Tracy"};
+        Trainer newTrainer = new Trainer { Name = "Tracy" };
 
         mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>()))
             .Callback(() => trainerList.Add(newTrainer))
@@ -40,6 +40,7 @@ public class TrainerServiceTests
         Assert.Equal(myTrainer.Name, newTrainer.Name);
         mockTrainerRepo.Verify(t => t.CreateNewTrainer(It.IsAny<Trainer>()), Times.Once());
     }
+
 
     [Fact]
     public void GetAllTrainersTest()
@@ -65,25 +66,11 @@ public class TrainerServiceTests
         var result = mapper.Map<List<Trainer>>(trainerService.GetAllTrainers().ToList());
 
         // Assert
-        for(int i = 0; i < trainerList.Count; i++)
+        for (int i = 0; i < trainerList.Count; i++)
         {
             Assert.Equal(result[i].Name, trainerList[i].Name);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     [Fact]
@@ -335,10 +322,42 @@ public class TrainerServiceTests
     }
 
 
-    // [Fact]
-    // public void GetTrainerById_Exists_Test()
-    // {
+    [Fact]
+    public void GetTrainerById_Exists_Test()
+    {
 
-    // }
- 
+    }
+
+
+    [Fact]
+    public void CreateNewTrainerDuplicateTest()
+    {
+
+    }
+
+    [Fact]
+    public void LoginTest()
+    {
+
+    }
+
+    [Fact]
+    public void LoginTrainerNullTest()
+    {
+
+    }
+
+    [Fact]
+    public void LoginPasswordMatchTest()
+    {
+
+    }
+
+    [Fact]
+    public void UpdateTrainerTest()
+    {
+
+    }
+
+
 }
