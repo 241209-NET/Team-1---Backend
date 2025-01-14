@@ -107,7 +107,39 @@ public class PkmnServiceTests
     [Fact]
     public void UpdatePkmnTest()
     {
+                // Arrange
+        Mock<IPokemonRepository> mockPkmnRepo = new();
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        //Configure Automapper
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        IMapper mapper = config.CreateMapper();
 
+        TrainerService ts = new(mockTrainerRepo.Object, mapper);
+        PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
+
+        Trainer newTrainer = new Trainer{Id = 0, Name = "Kyle"};
+
+        mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
+
+
+        var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
+        Pkmn newPkmn = new Pkmn{Id = 0, Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id};
+
+        mockTrainerRepo.Setup(repo => repo.GetTeam(It.IsAny<string>())).Returns([newTrainer]);
+        mockPkmnRepo.Setup(repo => repo.CreateNewPkmn(It.IsAny<Pkmn>())).Returns(newPkmn);
+        mockPkmnRepo.Setup(repo => repo.GetPkmnById(It.IsAny<int>())).Returns(newPkmn);
+        mockPkmnRepo.Setup(repo => repo.UpdatePkmn(It.IsAny<Pkmn>())).Returns(newPkmn);
+
+        newPkmn.Name = "Poor";
+
+        var myPkmn = pkmnService.UpdatePkmn(mapper.Map<UpdateDTO>(newPkmn));
+
+        // Assert
+        Assert.Equal(newPkmn.Name, myPkmn.Name);
+        mockPkmnRepo.Verify(p => p.UpdatePkmn(It.IsAny<Pkmn>()), Times.Once());
     }
 
     [Fact]
