@@ -27,7 +27,7 @@ public class TrainerController : ControllerBase
         }
     }
 
-    [HttpGet("login")]
+    [HttpPost("login")]
     public IActionResult Login([FromBody] LoginDTO login)
     {
         int trainerId = -5;
