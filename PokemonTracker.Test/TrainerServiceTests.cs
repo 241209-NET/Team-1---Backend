@@ -284,4 +284,61 @@ public class TrainerServiceTests
         // Assert
         Assert.Equal("This trainer doesn't exist!", exception.Message);
     }
+
+
+    [Fact]
+    public void GetTeam_Test()
+    {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+        var mockMapper = new Mock<IMapper>();
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mockMapper.Object);
+
+        // Sample Trainer with associated Team (list of Pokémon)
+        var trainer = new Trainer
+        {
+            Id = 1,
+            Name = "Ash",
+            Team = new List<Pkmn>
+            {
+                new Pkmn { Name = "Pikachu", Species = "Electric", DexNumber = 7 },
+                new Pkmn { Name = "Charizard", Species = "Fire", DexNumber = 17 }
+            }
+        };
+
+        // Mock the repository to return the trainer, specifically "Ash"
+        mockTrainerRepo.Setup(repo => repo.GetTeam("Ash")).Returns(new List<Trainer> { trainer });
+
+        // Mock the mapper correctly for IEnumerable<TrainerOutDTO> instead of TrainerOutDTO
+        mockMapper.Setup(m => m.Map<IEnumerable<TrainerOutDTO>>(It.IsAny<IEnumerable<Trainer>>()))
+            .Returns((IEnumerable<Trainer> trainers) => trainers.Select(t => new TrainerOutDTO
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Team = t.Team.Select(p => new PkmnOutDTO
+                {
+                    Name = p.Name,       // Map Pokémon Name
+                    Species = p.Species,  // Map Pokémon Species
+                    DexNumber = p.DexNumber // Map Pokémon DexNumber
+                }).ToList()
+            }));
+
+        // Act
+        var res = trainerService.GetTeam("Ash");
+        var resList = res.ToList();
+
+        // Assert
+        Assert.Single(resList); // Only 1 trainer should be returned
+        Assert.Equal("Ash", resList[0].Name); // Assert the trainer's name
+        Assert.Contains(resList[0].Team, p => p.Name == "Pikachu"); // Assert Pikachu in the team
+        Assert.Contains(resList[0].Team, p => p.Name == "Charizard"); // Assert Charizard in the team
+    }
+
+
+    // [Fact]
+    // public void GetTrainerById_Exists_Test()
+    // {
+
+    // }
+ 
 }
