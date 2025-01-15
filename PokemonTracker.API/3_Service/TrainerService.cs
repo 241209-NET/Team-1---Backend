@@ -97,10 +97,17 @@ public class TrainerService : ITrainerService
     public Trainer GetTrainerById(int id)
     {
         var trainer = _trainerRepository.GetTrainerById(id);
+        var team = GetTeam(trainer!.Name); 
 
-        var team = GetTeam(trainer!.Name);
-
-        trainer.Team = _mapper.Map<List<Pkmn>>(team.ElementAt(0).Team);
+        // Check if the team is empty before accessing it
+        if (team.Any())
+        {
+            trainer.Team = _mapper.Map<List<Pkmn>>(team.ElementAt(0).Team);
+        }
+        else
+        {
+            trainer.Team = new List<Pkmn>(); // Set to an empty list if no team is found
+        }
 
         return trainer;
     }

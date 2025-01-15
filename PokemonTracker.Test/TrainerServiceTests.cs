@@ -1,6 +1,7 @@
 using AutoMapper;
 using Moq;
 using PokemonTracker.API.DTO;
+using PokemonTracker.API.Migrations;
 using PokemonTracker.API.Model;
 using PokemonTracker.API.Repository;
 using PokemonTracker.API.Service;
@@ -323,16 +324,91 @@ public class TrainerServiceTests
 
 
     [Fact]
-    public void GetTrainerById_Exists_Test()
+    public void GetTrainerById_EmptyTeam_Test()
     {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+        var mockMapper = new Mock<IMapper>();
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mockMapper.Object);
 
+        // mock trainer with no team
+        var trainer = new Trainer
+        {
+            Id = 1,
+            Name = "Ash"
+        };
+
+        // Mock the repo's get trainer by id
+        mockTrainerRepo.Setup(repo => repo.GetTrainerById(1)).Returns(trainer);
+        // Mock the GetTeam method to return an empty list 
+        mockTrainerRepo.Setup(repo => repo.GetTeam("Ash")).Returns(new List<Trainer>());  
+
+        // Act
+        var res = trainerService.GetTrainerById(1);
+
+        // Assert
+        Assert.NotNull(res);               
+        Assert.Equal(1, res.Id);           // id's match
+        Assert.Equal("Ash", res.Name);     
+        Assert.Empty(res.Team);            
+    }
+
+
+    [Fact]
+    public void GetTrainerById_TeamExists_Test()
+    {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+
+        // Configure AutoMapper manually
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();  // Add the profile
+        });
+        IMapper mapper = config.CreateMapper(); // Create the Mapper instance
+
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mapper);
+
+        // mock trainer
+        var trainer = new Trainer
+        {
+            Id = 1,
+            Name = "Ash"
+        };
+
+        // Mock the reposito's get trainer by id
+        mockTrainerRepo.Setup(repo => repo.GetTrainerById(1)).Returns(trainer);
+        // Mock the GetTeam method to add the 2 pokemon.
+        mockTrainerRepo.Setup(repo => repo.GetTeam("Ash")).Returns(new List<Trainer>
+        {
+            new Trainer
+            {
+                Name = "Ash",
+                Team = new List<Pkmn>
+                {
+                    new Pkmn { Name = "Pikachu", Species = "Electric", DexNumber = 7 },
+                    new Pkmn { Name = "Charizard", Species = "Fire", DexNumber = 17 }
+                }
+            }
+        });
+
+        // Act
+        var res = trainerService.GetTrainerById(1);  // The service calls GetTeam internally
+
+        // Assert
+        Assert.NotNull(res);               
+        Assert.Equal(1, res.Id);           // id's match
+        Assert.Equal("Ash", res.Name);     
+        Assert.Equal(2, res.Team.Count);   
+        Assert.Contains(res.Team, p => p.Name == "Pikachu"); 
+        Assert.Contains(res.Team, p => p.Name == "Charizard"); 
     }
 
 
     [Fact]
     public void CreateNewTrainerDuplicateTest()
     {
-         // Arrange
+        // Arrange
         Mock<ITrainerRepository> mockTrainerRepo = new();
         var config = new MapperConfiguration(cfg =>
         {
@@ -362,6 +438,7 @@ public class TrainerServiceTests
         Assert.Equal("Duplicate Trainer", exception.Message);
     }
 
+
     [Fact]
     public void LoginTest()
     {
@@ -382,6 +459,7 @@ public class TrainerServiceTests
         Assert.Equal(t.Name, result.Name);
         mockTrainerRepo.Verify(x => x.GetTrainerByUsername(It.IsAny<string>()), Times.Once());
     }
+
 
     [Fact]
     public void LoginTrainerNullTest()
@@ -404,17 +482,17 @@ public class TrainerServiceTests
         mockTrainerRepo.Verify(x => x.GetTrainerByUsername(It.IsAny<string>()), Times.Once());
     }
 
+
     [Fact]
     public void LoginPasswordMatchTest()
     {
 
     }
 
+
     [Fact]
     public void UpdateTrainerTest()
     {
 
     }
-
-
 }
