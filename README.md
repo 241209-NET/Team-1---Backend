@@ -21,21 +21,24 @@ A web app hosted on Azure where trainers can sign up, look through the different
 - ASP.NET (Web API Framework)
 - Azure Web Hosting For Our API
 
-## Mvp:
-- User can create a new Trainer.
-- User can view all Trainers that exist.
-- User can find all Pokemon by their species.
-- User can find a Pokemon by it's Nickname.
-- User can find all Pokemon filtered by Type.
-- User can view a specific Trainer's team of Pokemon.
-- User can add or remove Pokemon from a Trainer's team.
-- User can remove a Trainer that exists.
-- Pokemon have pokedex descriptions included.
-- Team size is limited to six pokemon for each trainer.
+## MVP:
+- User can register as a Trainer
+- User can login as an existing Trainer
+- User can view the list of all Pokemon
+- User can search for Pokemon by name or Pokedex number
+- User can view a page for a specific Pokemon
+- User can add a Pokemon to their team with a nickname
+- User can view their team of Pokemon
+- User can rename a Pokemon in their team
+- User can remove a Pokemon from their team
+- Team size is limited to six Pokemon for each trainer
 
 ## Stretch Goals:
-- Authentication
-- Display movesets for each pokemon
+- List of Pokemon is paginated instead of using "Load More" button
+- User can filter list of Pokemon by type
+- User can change their Trainer name
+- User can delete their Trainer account
+- Frontend is Dockerized
 - Trainers can have multiple teams
 
 ## ERD
