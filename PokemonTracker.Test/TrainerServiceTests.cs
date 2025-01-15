@@ -332,7 +332,7 @@ public class TrainerServiceTests
     [Fact]
     public void CreateNewTrainerDuplicateTest()
     {
-        // Arrange
+         // Arrange
         Mock<ITrainerRepository> mockTrainerRepo = new();
         var config = new MapperConfiguration(cfg =>
         {

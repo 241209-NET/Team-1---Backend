@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\PokemonTracker.API",
+    "\\PokemonTracker.API\\3_Service",
+    "\\PokemonTracker.Test"
+  ],
+  "SelectedNode": "\\PokemonTracker.Test\\PkmnServiceTests.cs",
+  "PreviewInSolutionExplorer": false
+}

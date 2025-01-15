@@ -13,5 +13,12 @@ public class MappingProfile : Profile
         CreateMap<Trainer, TrainerInDTO>().ReverseMap();
         CreateMap<Trainer, TrainerOutDTO>().ReverseMap();
         CreateMap<JObject, TrainerInDTO>().ReverseMap();
+        CreateMap<UpdateDTO, PkmnInDTO>().ReverseMap();
+        CreateMap<UpdateDTO, PkmnOutDTO>().ReverseMap();
+        CreateMap<UpdateDTO, Pkmn>().ReverseMap();
+        CreateMap<UpdateDTO, Trainer>().ReverseMap();
+        CreateMap<UpdateDTO, TrainerInDTO>().ReverseMap();
+        CreateMap<UpdateDTO, TrainerOutDTO>().ReverseMap();
+
     }
 }

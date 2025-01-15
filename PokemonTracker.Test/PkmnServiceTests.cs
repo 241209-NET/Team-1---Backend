@@ -107,7 +107,11 @@ public class PkmnServiceTests
     [Fact]
     public void UpdatePkmnTest()
     {
+<<<<<<< HEAD
         // Arrange
+=======
+                // Arrange
+>>>>>>> origin/main
         Mock<IPokemonRepository> mockPkmnRepo = new();
         Mock<ITrainerRepository> mockTrainerRepo = new();
         //Configure Automapper
@@ -120,13 +124,21 @@ public class PkmnServiceTests
         TrainerService ts = new(mockTrainerRepo.Object, mapper);
         PokemonService pkmnService = new(mockPkmnRepo.Object, mapper, ts);
 
+<<<<<<< HEAD
         Trainer newTrainer = new Trainer { Id = 0, Name = "Kyle" };
+=======
+        Trainer newTrainer = new Trainer{Id = 0, Name = "Kyle"};
+>>>>>>> origin/main
 
         mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>())).Returns(newTrainer);
 
 
         var t = ts.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
+<<<<<<< HEAD
         Pkmn newPkmn = new Pkmn { Id = 0, Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id };
+=======
+        Pkmn newPkmn = new Pkmn{Id = 0, Species = "Bulbasaur", Name = "Rich", TrainerID = t.Id};
+>>>>>>> origin/main
 
         mockTrainerRepo.Setup(repo => repo.GetTeam(It.IsAny<string>())).Returns([newTrainer]);
         mockPkmnRepo.Setup(repo => repo.CreateNewPkmn(It.IsAny<Pkmn>())).Returns(newPkmn);

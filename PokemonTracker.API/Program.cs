@@ -46,8 +46,6 @@ builder.Services.AddCors(options =>
 
 });
 
-
-
 var app = builder.Build();
 
 //This is a test comment from John
