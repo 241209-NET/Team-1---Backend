@@ -332,7 +332,34 @@ public class TrainerServiceTests
     [Fact]
     public void CreateNewTrainerDuplicateTest()
     {
+        // Arrange
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        IMapper mapper = config.CreateMapper();
+        TrainerService trainerService = new(mockTrainerRepo.Object, mapper);
 
+        List<Trainer> trainerList = [
+            new Trainer{Name = "Ash"},
+            new Trainer{Name = "Brock"},
+            new Trainer{Name = "Misty"}
+        ];
+
+        Trainer newTrainer = new Trainer { Name = "Brock" };
+
+        mockTrainerRepo.Setup(repo => repo.GetTrainerByUsername(It.IsAny<string>())).Returns(newTrainer);
+        mockTrainerRepo.Setup(repo => repo.CreateNewTrainer(It.IsAny<Trainer>()))
+            .Callback(() => trainerList.Add(newTrainer))
+            .Returns(newTrainer);
+
+        // Act
+        Action dupe = () => trainerService.CreateNewTrainer(mapper.Map<TrainerInDTO>(newTrainer));
+        Exception exception = Assert.Throws<Exception>(dupe);
+
+        // Assert
+        Assert.Equal("Duplicate Trainer", exception.Message);
     }
 
     [Fact]
