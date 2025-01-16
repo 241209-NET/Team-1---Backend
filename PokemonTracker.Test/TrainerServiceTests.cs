@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Moq;
 using PokemonTracker.API.DTO;
 using PokemonTracker.API.Migrations;
@@ -376,7 +377,7 @@ public class TrainerServiceTests
             Name = "Ash"
         };
 
-        // Mock the reposito's get trainer by id
+        // Mock the repo's get trainer by id
         mockTrainerRepo.Setup(repo => repo.GetTrainerById(1)).Returns(trainer);
         // Mock the GetTeam method to add the 2 pokemon.
         mockTrainerRepo.Setup(repo => repo.GetTeam("Ash")).Returns(new List<Trainer>
@@ -524,25 +525,25 @@ public class TrainerServiceTests
         Mock<IMapper> mockMapper = new Mock<IMapper>();
         TrainerService trainerService = new(mockTrainerRepo.Object, mockMapper.Object);
 
-        // List of trainers in the repository (for mock purposes)
+        // List o trainers
         var trainerList = new List<Trainer>
         {
             new Trainer { Id = 1, Name = "Bob" },
             new Trainer { Id = 2, Name = "Alice" }
         };
 
-        // Create the UpdateDTO for the non-existent trainer directly
+        // main character ghost
         var ghostDTO = new UpdateDTO
         {
             Id = 999,  // This is the ID that doesn't exist
             Name = "Ghost"
         };
 
-        // Mock the behavior of GetTrainerById to return null for a non-existent trainer
+        // Mock repo method GetTrainerById, returns Trainer or null
         mockTrainerRepo.Setup(repo => repo.GetTrainerById(It.Is<int>(id => id == ghostDTO.Id)))
             .Returns((int id) => trainerList.FirstOrDefault(t => t.Id == id));
 
-        // Mock the behavior of the Mapper to map UpdateDTO to Trainer
+        // Mocking Mapper to convert UpdateDTO to Trainer
         mockMapper.Setup(m => m.Map<Trainer>(It.IsAny<UpdateDTO>()))
             .Returns((UpdateDTO dto) => new Trainer
             {
@@ -550,23 +551,80 @@ public class TrainerServiceTests
                 Name = dto.Name
             });
 
-        // Mock the behavior of the Mapper to map Trainer to TrainerOutDTO
+        // Mocking Mapper to convert Trainer to TrainerOutDTO
         mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>()))
             .Returns((Trainer t) => new TrainerOutDTO
             {
                 Id = t.Id,
                 Name = t.Name,
-                Team = t.Team.Select(p => new PkmnOutDTO()).ToList() // Assuming Team is a collection
+                Team = t.Team.Select(p => new PkmnOutDTO()).ToList() 
             });
 
-        // Act & Assert: Try to update a non-existent trainer
+        // Act & Assert
         var exception = Assert.Throws<Exception>(() => trainerService.UpdateTrainer(ghostDTO));
 
-        // Assert that the exception message is as expected
+        // Assert 
         Assert.Equal("This trainer doesn't exist!", exception.Message);
-
-        // Verify that GetTrainerById was called once with the ghost ID
         mockTrainerRepo.Verify(x => x.GetTrainerById(It.IsAny<int>()), Times.Once());
     }
 
+
+    [Fact]
+    public void UpdateTrainer_Exists_Test()
+    {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+        var mockMapper = new Mock<IMapper>();
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mockMapper.Object);
+
+        // List o trainers
+        var trainerList = new List<Trainer>
+        {
+            new Trainer { Id = 1, Name = "Bob" },
+            new Trainer { Id = 2, Name = "Alice" }
+        };
+
+        // mock updateDTO req body
+        var goodDTO = new UpdateDTO
+        {
+            Id = 1,
+            Name = "Hank"  // tryna change to Hank
+        };
+
+        // Mock the repo's GetTrainerById to return the trainer with Id = 1
+        mockTrainerRepo.Setup(repo => repo.GetTrainerById(1))
+            .Returns((int id) => trainerList.Find(t => t.Id == id));  // Returns the trainer Id 1
+
+        // Mock the repo's UpdateTrainer method to return the updated trainer
+        mockTrainerRepo.Setup(repo => repo.UpdateTrainer(It.IsAny<Trainer>()))
+            .Returns((Trainer t) => t);  
+
+        // Mocking Mapper to convert UpdateDTO to Trainer
+        mockMapper.Setup(m => m.Map<Trainer>(It.IsAny<UpdateDTO>()))
+            .Returns((UpdateDTO dto) => new Trainer
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Team = new List<Pkmn>()  // Initialize team as empty, since we're only testing Name and Id
+            });
+
+        // Mocking Mapper to convert Trainer to TrainerOutDTO
+        mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>()))
+            .Returns((Trainer t) => new TrainerOutDTO
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Team = new List<PkmnOutDTO>()  // Empty team, since we're ignoring the team in this test
+            });
+
+        // Act
+        var resTrainer = trainerService.UpdateTrainer(goodDTO);  // this is a TrainerOutDTO
+
+        // Assert
+        var updatedTrainer = trainerList.FirstOrDefault(t => t.Id == goodDTO.Id);  // Trainer type
+        Assert.NotNull(updatedTrainer);  // trainer exists in list
+        Assert.Equal(goodDTO.Name, updatedTrainer.Name);  // compare update dto new name to new Trainer name
+        mockTrainerRepo.Verify(x => x.GetTrainerById(It.IsAny<int>()), Times.Once());  // Verify GetTrainerById was called once
+        mockTrainerRepo.Verify(x => x.UpdateTrainer(It.IsAny<Trainer>()), Times.Once());  // Verify UpdateTrainer was called once
+    }
 }
