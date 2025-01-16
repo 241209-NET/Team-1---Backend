@@ -51,6 +51,11 @@ public class TrainerService : ITrainerService
     {
         var update = _trainerRepository.GetTrainerById(trainer.Id);
 
+        if (update == null)
+        {
+            throw new Exception("This trainer doesn't exist!");
+        }
+
         update!.Name = trainer.Name;
 
         update = _trainerRepository.UpdateTrainer(update);
