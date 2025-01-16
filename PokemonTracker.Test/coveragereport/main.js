@@ -222,7 +222,7 @@ var assemblies = [
     "name": "PokemonTracker.API",
     "classes": [
       { "name": "PokemonTracker.API.Service.PokemonService", "rp": "PokemonTracker.API_PokemonService.html", "cl": 29, "ucl": 0, "cal": 29, "tl": 62, "cb": 2, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "PokemonTracker.API.Service.TrainerService", "rp": "PokemonTracker.API_TrainerService.html", "cl": 52, "ucl": 10, "cal": 62, "tl": 114, "cb": 10, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "PokemonTracker.API.Service.TrainerService", "rp": "PokemonTracker.API_TrainerService.html", "cl": 63, "ucl": 2, "cal": 65, "tl": 119, "cb": 13, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
