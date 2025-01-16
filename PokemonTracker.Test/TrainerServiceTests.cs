@@ -484,9 +484,35 @@ public class TrainerServiceTests
 
 
     [Fact]
-    public void LoginPasswordMatchTest()
+    public void LoginPasswordsDontMatchTest()
     {
+        // Arrange
+        var mockTrainerRepo = new Mock<ITrainerRepository>();
+        var mockMapper = new Mock<IMapper>();
+        var trainerService = new TrainerService(mockTrainerRepo.Object, mockMapper.Object);
 
+        // List o trainers
+        var trainerList = new List<Trainer>
+        {
+            new Trainer { Id = 0, Name = "Bob", Username = "admin", Password = "password" },
+            new Trainer { Id = 1, Name = "Boba", Username = "admina", Password = "passworda" }
+        };
+
+        string goodUsername = "admin";
+        string badPassword = "asdf";
+
+        // Mock the behavior of the repo method:
+        mockTrainerRepo.Setup(repo => repo.GetTrainerByUsername(goodUsername))
+            .Returns((string username) => trainerList.FirstOrDefault(t => t.Username == goodUsername));
+
+        // Act & Assert
+        var exception = Assert.Throws<Exception>(() => trainerService.Login(goodUsername, badPassword));
+
+        // Assert
+        Assert.Equal("The password doesn't match", exception.Message);
+
+        // Verify the mock was called to check the username
+        mockTrainerRepo.Verify(x => x.GetTrainerByUsername(It.IsAny<string>()), Times.Once());
     }
 
 
