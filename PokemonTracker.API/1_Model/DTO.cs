@@ -38,7 +38,7 @@ public class LoginDTO
 public class UpdateDTO
 {
     public int Id { get; set;}
-     public string Name { get; set;} = "";
+    public string Name { get; set;} = "";
 }
 
 public class TrainerOutDTO

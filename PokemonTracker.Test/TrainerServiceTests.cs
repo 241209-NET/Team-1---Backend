@@ -517,8 +517,56 @@ public class TrainerServiceTests
 
 
     [Fact]
-    public void UpdateTrainerTest()
+    public void UpdateTrainer_DoesntExist_Test()
     {
+        // Arrange
+        Mock<ITrainerRepository> mockTrainerRepo = new();
+        Mock<IMapper> mockMapper = new Mock<IMapper>();
+        TrainerService trainerService = new(mockTrainerRepo.Object, mockMapper.Object);
 
+        // List of trainers in the repository (for mock purposes)
+        var trainerList = new List<Trainer>
+        {
+            new Trainer { Id = 1, Name = "Bob" },
+            new Trainer { Id = 2, Name = "Alice" }
+        };
+
+        // Create the UpdateDTO for the non-existent trainer directly
+        var ghostDTO = new UpdateDTO
+        {
+            Id = 999,  // This is the ID that doesn't exist
+            Name = "Ghost"
+        };
+
+        // Mock the behavior of GetTrainerById to return null for a non-existent trainer
+        mockTrainerRepo.Setup(repo => repo.GetTrainerById(It.Is<int>(id => id == ghostDTO.Id)))
+            .Returns((int id) => trainerList.FirstOrDefault(t => t.Id == id));
+
+        // Mock the behavior of the Mapper to map UpdateDTO to Trainer
+        mockMapper.Setup(m => m.Map<Trainer>(It.IsAny<UpdateDTO>()))
+            .Returns((UpdateDTO dto) => new Trainer
+            {
+                Id = dto.Id,
+                Name = dto.Name
+            });
+
+        // Mock the behavior of the Mapper to map Trainer to TrainerOutDTO
+        mockMapper.Setup(m => m.Map<TrainerOutDTO>(It.IsAny<Trainer>()))
+            .Returns((Trainer t) => new TrainerOutDTO
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Team = t.Team.Select(p => new PkmnOutDTO()).ToList() // Assuming Team is a collection
+            });
+
+        // Act & Assert: Try to update a non-existent trainer
+        var exception = Assert.Throws<Exception>(() => trainerService.UpdateTrainer(ghostDTO));
+
+        // Assert that the exception message is as expected
+        Assert.Equal("This trainer doesn't exist!", exception.Message);
+
+        // Verify that GetTrainerById was called once with the ghost ID
+        mockTrainerRepo.Verify(x => x.GetTrainerById(It.IsAny<int>()), Times.Once());
     }
+
 }
